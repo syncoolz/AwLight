@@ -599,7 +599,7 @@ class bot {
             }
           }
         
-      } else { bott.appendMessage(`${task.id} : CPU Overload : ${CpuChecks}`) }
+      } else { bott.appendMessage(`CPU Overload : ${CpuChecks}`) }
     }
   }
 
