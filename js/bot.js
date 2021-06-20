@@ -163,7 +163,7 @@ class bot {
       document.getElementById("text-user").innerHTML = userAccount
       document.getElementsByTagName('title')[0].text = userAccount
       await botzz.MonitorRealtime();
-      this.appendMessage(`Wellcome ${userAccount}`)
+      this.appendMessage(`Welcome ${userAccount}`)
       const minedelay = await getMineDelay(userAccount);
       //this.appendMessage(`Minedelay ${minedelay}`)
       this.TimeWait = Math.ceil(minedelay + 10000);
