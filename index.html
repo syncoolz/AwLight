@@ -541,6 +541,13 @@
   }
 
   async function BtnSwaptoTransfer() {
+    Swal.fire({
+        icon: 'info',
+        title: 'Please wait...',
+        html: '[Swap & Transfer] System in progress!',
+        showConfirmButton: false,
+        timer: 5000
+      })    
     const balance = await getBalance(wax.userAccount, wax.api.rpc);
     const balanceTLM = parseFloat(balance).toFixed(4) - 0.0001
     const amountToST = parseFloat(document.getElementById("amountToST").value)
@@ -600,7 +607,14 @@
                 expireSeconds: 90,
               });
               if (results && results.processed) {
-                bott.appendMessage(`Succsess : Transfer ${amount} WAX From ${account} To ${toAcc}`)
+                bott.appendMessage(`Success : Transfer ${amount} WAX From ${account} To ${toAcc}`)
+                Swal.fire({
+        icon: 'success',
+        title: 'Success',
+        html: '[Swap & Transfer] The system executed successfully.',
+        showConfirmButton: false,
+        timer: 2000
+      })    
                 return `Transfer ${amount} WAX from ${account} to ${toAcc}`
               }
             }
