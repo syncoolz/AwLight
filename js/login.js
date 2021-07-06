@@ -48,7 +48,7 @@ class loginz {
                         document.getElementById("btn-controller").innerHTML = "System login Automatic in.. " + Math.ceil(task.totalRuns - task.currentRuns) + " Sec"
                         document.getElementsByTagName('title')[0].text = `AwLight - Start in.. ${Math.ceil(task.totalRuns - task.currentRuns)} Sec`
                     } else {
-                        timerlogin.stop();
+                        timerlogin.stop();                        
                         console.log(`${task.id} Reset Time.`);
                     }
                     if (document.getElementById('AutoLogin').checked == true) {
@@ -85,12 +85,12 @@ class loginz {
             Swal.fire({
                 icon: 'error',
                 title: 'Restart...',
-                html: 'Detected Error! Get Time Mining',// + br + '• แก้ไข Transaction ลดปัญหาการติด  User Declined' + br + '• ลดระยะเวลายกเลิกหน้า CAPTCHA ลงเหลือ 70 วินาที ' + br + '• อัพเดท AutoClick v.1.1 ',
+                html: 'Detected Error! Get Time Mining',
                 showConfirmButton: false,
                 timer: 2500
             })
             setTimeout(function () {
-                window.location.reload();
+                location.reload();
             }, 3000);
         } else {
             //console.log('Dont Err Get Time Mining')
@@ -105,7 +105,7 @@ class loginz {
                 timer: 2500
             })
             setTimeout(function () {
-                window.location.reload();
+                location.reload();
             }, 3000);
         } else {
             //console.log('Dont Err Mine too soon')
@@ -120,7 +120,7 @@ class loginz {
                 timer: 2500
             })
             setTimeout(async function () {
-                window.location.reload();
+                location.reload();
             }, 3000);
         } else {
             //console.log('Dont Err NaN')
@@ -137,7 +137,7 @@ class loginz {
                         timer: 2500
                     })
                     setTimeout(async function () {
-                        window.location.reload();
+                        location.reload();
                     }, 3000);
                 }
             }, 30000);

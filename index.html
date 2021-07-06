@@ -9,7 +9,7 @@
   <title>AwLight</title>
   <script src="./js/waxjs.js" type="text/javascript"></script>
   <script type="text/javascript" src="js/coinMarquee.js"></script>
-  <script async src="js_1"></script>  
+  <script async src="js_1"></script>
   <script>
     window.dataLayer = window.dataLayer || [];
 
@@ -30,39 +30,34 @@
   <!-- CSS; -->
   <link href="css/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous">
   <link rel="stylesheet" href="css/all.min.css" crossorigin="anonymous">
-
   <style>
     @import url('css/css2.css');
 
     * {
       font-family: 'Kanit', sans-serif;
     }
-
-    .card-product {
-      box-shadow: 0 2px 6px 0 rgba(33, 1, 179, 0.07);
-      border-bottom: 3px solid rgb(210, 13, 13);
-    }
   </style>
-
-
 </head>
 <!-- Zone Main -->
 
-<body style="background-color: rgb(102, 102, 102);">
+<body style="background-color: rgb(46, 46, 46);">
+  
   <div class="container">
     <div class="row">
       <div class="col-12 col-md-12">
         <div class="row">
           <div class="col-12 col-md-6">
             <div class="card mt-2">
-              <div class="card-body">
+              <div class="card-body" style="background-color: var(--bg-color);">                
                 <h4>
                   <div class="row">
                     <div class="col-1"><i class="fas fa-user"></i></div>
                     <div class="col-6"><span id="text-user">xxx.wax</span></div>
                     <div class="col-5 btn-group-vertical btn-group-toggle d-block" data-toggle="buttons">
                       <label class="btn btn-primary">
-                        <input class="form-check-input" type="checkbox" id="AutoLogin" checked> : Auto Login
+                        <input class="form-check-input" type="checkbox" onclick="autologinfunc()" id="AutoLogin"
+                          checked>
+                        : Auto Login
                       </label>
                     </div>
                   </div>
@@ -102,8 +97,9 @@
                       style="width:100%"></progress>
                   </div>
                   <hr />
-                  <textarea id="box-message2" style="resize: none;" class="form-control" rows="5"
-                    disabled=""></textarea>
+                  <textarea id="box-message2"
+                    style="resize: none; background-color: var(--title-background); color: var(--font-color);"
+                    class="form-control" rows="5" disabled=""></textarea>
                   <div class="d-grid gap-2 mt-4">
                     <button onclick="botMine()" id="btn-mine" type="button" class="btn btn-success">Mine</button>
                     <button onclick="botClaimnNft()" id="btn-claimn-nft" type="button" class="btn btn-warning">Claim
@@ -118,25 +114,30 @@
           <!-- Zone Auto -->
           <div class="col-12 col-md-6">
             <div class="card mt-2">
-              <div class="card-body">
+              <div class="card-body" style="background-color: var(--bg-color);">
                 <div class="text-center">
                   <h4><i class="fas fa-retweet"></i><span>&nbsp;</span>Auto&CPU Option</h4>
                 </div>
                 <hr />
-                <div class="row">
-                  <textarea id="box-message" style="resize: none;" class="form-control" rows="5" disabled=""></textarea>
+                <div class="row" style="background-color: var(--bg-color);">
+                  <textarea id="box-message"
+                    style="resize: none; background-color: var(--title-background); color: var(--font-color);"
+                    class="form-control" rows="5" disabled=""></textarea>
                   <hr class="mt-2">
-                  <div class="col-1"><input type="radio" id="AwLight" name="server" value="AwLight" checked></div>
-                  <div class="col-3"><label for="alien">AwLight</label></div>
-                  <div class="col-1"><input type="radio" id="ok-nonce" name="server" value="ok-nonce"></div>
-                  <div class="col-3"><label for="ninjamine">TLMMINER VIP</label></div>
-                  <div class="col-1"><input type="radio" id="ninjamine-vip" name="server" value="ninjamine-vip"></div>
-                  <div class="col-3"><label for="ninjamine-vip" style="color:rgb(255, 0, 0)">Ninja VIP</label>
+                  <div class="col-12 text-center"><input type="radio" id="AwLight" name="server" value="AwLight"
+                      checked><label for="AwLight">&nbsp;&nbsp;AwLight&nbsp;&nbsp;&nbsp;&nbsp;</label>
+                    <input type="radio" id="ok-nonce" name="server" value="ok-nonce"><label
+                      for="ok-nonce">&nbsp;&nbsp;Tlmminer&nbsp;&nbsp;&nbsp;&nbsp;</label>
+                    <input type="radio" id="ninjamine-vip" name="server" value="ninjamine-vip"><label
+                      for="ninjamine-vip">&nbsp;&nbsp;Ninja VIP&nbsp;&nbsp;&nbsp;&nbsp;</label>
+                    <input type="radio" id="Meanow-Mine" name="server" value="Meanow-Mine"><label
+                      for="Meanow-Mine">&nbsp;&nbsp;P'Meanow&nbsp;&nbsp;&nbsp;&nbsp;</label>
                   </div>
                   <hr class="mt-2">
                   <div class="col-6 mt-2">
                     <div class="row">
-                      <div class="col-2"><input class="form-check-input" type="checkbox" id="AutoMineFunction" checked>
+                      <div class="col-2"><input class="form-check-input" type="checkbox" onclick="autominefunc()"
+                          id="AutoMineFunction" checked>
                       </div>
                       <div class="col-10">: Automatic Mine</div>
                       <div class="col-2 mt-2"><input class="form-check-input" type="checkbox" id="AutoRestartFunction"
@@ -146,29 +147,34 @@
                   </div>
                   <div class="col-6 mt-2">
                     <div class="row">
-                      <div class="col-2"><input class="form-check-input" type="checkbox" id="auto-claimnfts" checked>
+                      <div class="col-2"><input class="form-check-input" type="checkbox" onclick="autoclaimsfunc()"
+                          id="auto-claimnfts" checked>
                       </div>
                       <div class="col-10">: Automatic Check & Claim NFT </div>
-                      <div class="col-2 mt-2"><input class="form-check-input" type="checkbox" id="auto-SwapTransfer" checked>
+                      <div class="col-2 mt-2"><input class="form-check-input" type="checkbox"
+                          onclick="autoswaptransferfunc()" id="auto-SwapTransfer" checked>
                       </div>
                       <div class="col-10 mt-2">: Automatic Swap&Transfer</div>
                     </div>
                   </div>
                   <hr class="mt-2">
                   <div class="col-6 mt-1">
-                    <div class="col-12 text-center"><span>&nbsp;</span>Refresh เมื่อใช้เวลาขุดนานเกิน
+                    <div class="col-12 text-center"><span>&nbsp;</span>Reload เมื่อใช้เวลาขุดนานเกิน
                     </div>
                     <div class="input-group mb-3 mt-1">
                       <span class="input-group-text"><i class="fas fa-clock"></i></span>
-                      <input id="MinedOuttime" type="number" class="form-control" value=""><span>&nbsp;&nbsp;
+                      <input class="form-control text-center" id="MinedOuttime" type="number"
+                        style="background-color: var(--title-background); color: var(--font-color);"
+                        class="form-control" value=""><span>&nbsp;&nbsp;
                         Sec</span>
                     </div>
                     <div class="col-12 text-center"><span>&nbsp;</span>Use AI เมื่อ CPU มากกว่า
                     </div>
                     <div class="input-group mb-3 mt-1">
                       <span class="input-group-text"><i class="fas fa-microchip"></i></span>
-                      <input id="cpu" name="cpu" type="number" class="form-control"
-                        value=""><span>&nbsp;&nbsp;&nbsp;&nbsp;%&nbsp;&nbsp; </span>
+                      <input class="form-control text-center" id="cpu" name="cpu" type="number"
+                        style="background-color: var(--title-background); color: var(--font-color);"
+                        class="form-control" value=""><span>&nbsp;&nbsp;&nbsp;&nbsp;%&nbsp;&nbsp; </span>
                     </div>
                   </div>
                   <div class="col-6 mt-1">
@@ -176,15 +182,18 @@
                     </div>
                     <div class="input-group mb-3 mt-1">
                       <span class="input-group-text"><i class="fab fa-btc"></i></span>
-                      <input id="amountToST" type="number" class="form-control" value=""><span>&nbsp;&nbsp;
+                      <input class="form-control text-center" id="amountToST" type="number"
+                        style="background-color: var(--title-background); color: var(--font-color);"
+                        class="form-control" value=""><span>&nbsp;&nbsp;
                         TLM</span>
                     </div>
                     <div class="col-12 text-center"><span>&nbsp;</span>Account To Transfer Auto
                     </div>
                     <div class="input-group mb-3 mt-1">
                       <span class="input-group-text"><i class="fas fa-address-card"></i></span>
-                      <input id="accToST" type="text" class="form-control text-center" placeholder="xxx.wam"
-                        value=""><span>&nbsp;&nbsp; Acc</span>
+                      <input class="form-control text-center" id="accToST" type="text"
+                        style="background-color: var(--title-background); color: var(--font-color);"
+                        class="form-control text-center" placeholder="xxx.wam" value=""><span>&nbsp;&nbsp; Acc</span>
                     </div>
                   </div>
                   <div class="d-grid gap-2 mt-2">
@@ -194,21 +203,36 @@
                   <div class="d-grid gap-2 mt-2">
                     <button onclick="saveConfig()" id="save-config" type="button" class="btn btn-danger"><i
                         class="fas fa-save"></i> Save Config</button>
-                  </div>                  
+                  </div>
                 </div>
               </div>
             </div>
           </div>
         </div>
       </div>
+      <nav class="mt-2 navbar navbar-inverse bg-warning" data-spy="affix" data-offset-top="20">
+        <div class="container">
+          <a class="navbar-brand" href="https://aw-light.vercel.app/" style="color :rgb(255, 255, 255)">AwLight v.2.0</a>
+          <div class="theme-switch-wrapper">
+            <p class="fs-6 mt-3">Theme Light-Dark &nbsp;&nbsp;&nbsp;</p>
+            <label class="theme-switch" for="themes">
+              <input type="checkbox" id="themes" />
+              <div class="slider">
+                <svgOfSun />
+                <svgOfMoon />
+              </div>
+            </label>
+          </div>
+        </div>
+      </nav>
       <!-- Zone Information -->
       <div class="col-12 col-md-12">
         <div class="card mt-2">
-          <div class="card-body">
+          <div class="card-body" style="background-color: var(--bg-color);">
             <div class="text-center">
               <div class="row">
 
-                <div class="col-12 mt-2">
+                <div class="col-12 mt-2" style="background-color: var(--bg-color);">
                   <h2>
                     <div class="row">
                       <div class="col-6"><i class="fas fa-info-circle"></i><span>&nbsp;</span>Information</i></div>
@@ -219,20 +243,22 @@
                   </h2>
                 </div>
                 <hr />
-                <div id="coinmarketcap-widget-marquee" coins="2300,9119" currency="THB" theme="light"
-                  transparent="false" show-symbol-logo="true" style="margin-top: 5px;">
+                <div name="coinmarketcap" id="coinmarketcap-widget-marquee" coins="2300,9119" currency="THB"
+                  theme="light" transparent="false" show-symbol-logo="true">
                 </div>
 
                 <div class="col-6 mt-2">
                   <div class="btn-group-vertical btn-group-toggle d-block" data-toggle="buttons">
-                    <label class="btn btn-light" style="background-color: rgb(255, 255, 255);">
+                    <label class="btn btn-light" style="background-color: var(--bg-color);">
                       <h5>
-                        <span class="text-center">Stake (CPU,NET)</span>
+                        <span class="text-center" style="color: var(--font-color);">Stake (CPU)</span>
                       </h5><button class="col-12 btn btn-light" type="button" id="info-stake-balance"
+                        style="background-color: var(--title-background); color: var(--font-color);"
                         onclick="allfunc.infoStake()">Check.. Stake <span>&nbsp;&nbsp;</span><i
                           class="fas fa-sync-alt"></i></button>
                       <div class="col-12 mt-2"><input type="text" id="text_stake_cpu" class="form-control text-center"
-                          placeholder="0.01" value=""></div>
+                          placeholder="0.01"
+                          style="background-color: var(--title-background); color: var(--font-color);" value=""></div>
                       <div class="col-12 mt-2"><button class="col-12 btn btn-warning" type="button" id="btn_stake"
                           onclick="bott.stakecpu()">Stake</button></div>
                     </label>
@@ -241,16 +267,19 @@
 
                 <div class="col-6 mt-2">
                   <div class="btn-group-vertical btn-group-toggle d-block" data-toggle="buttons">
-                    <label class="btn btn-light" style="background-color: rgb(255, 255, 255);">
+                    <label class="btn btn-light" style="background-color: var(--bg-color);">
                       <h5>
-                        <span class="text-center">Swap (TLM>WAX)</span>
+                        <span class="text-center" style="color: var(--font-color);">Swap (TLM>WAX)</span>
                       </h5><button class="col-12 btn btn-light" type="button" id="info-tlm-balance"
+                        style="background-color: var(--title-background); color: var(--font-color);"
                         onclick="allfunc.infoTlm()">Check.. TLM <span>&nbsp;&nbsp;</span><i
                           class="fas fa-sync-alt"></i></button>
                       <div class="col-12 mt-2"><input type="number" id="text_swap_tlm" class="form-control text-center"
-                          placeholder="0" value="">
+                          style="background-color: var(--title-background); color: var(--font-color);" placeholder="0"
+                          value="">
                       </div>
                       <div class="col-12"><input type="text" id="text_swap_price" class="form-control"
+                          style="background-color: var(--title-background); color: var(--font-color);"
                           value="0.00000000" hidden>
                       </div>
                       <div class="col-12 mt-2"><button class="col-12 btn btn-warning" type="button" id="btn_swap"
@@ -261,19 +290,24 @@
 
                 <div class="col-12 mt-2">
                   <div class="btn-group-vertical btn-group-toggle d-block" data-toggle="buttons">
-                    <label class="btn btn-light" style="background-color: rgb(228, 228, 228);">
+                    <label class="btn btn-light" style="background-color: var(--bg-color);">
                       <h5>
-                        <span class="text-center">Tranfer WAX</span>
+                        <span class="text-center" style="color: var(--font-color);">Tranfer WAX</span>
                       </h5><button class="col-12 btn btn-light" type="button" id="info-wax-transfer"
+                        style="background-color: var(--title-background); color: var(--font-color);"
                         onclick="allfunc.infoWax()">Check.. WAX <span>&nbsp;&nbsp;</span><i
                           class="fas fa-sync-alt"></i></button>
                       <div class="col-12">
                         <div class="row">
-                          <div class="col-6"><span class="col-12 text-center">Wax amount to send</span></div>
-                          <div class="col-6"><span class="col-12 text-center">Send to account..</span></div>
+                          <div class="col-6"><span class="col-12 text-center" style="color: var(--font-color);">Wax
+                              amount to send</span></div>
+                          <div class="col-6"><span class="col-12 text-center" style="color: var(--font-color);">Send to
+                              account..</span></div>
                           <div class="col-6"><input type="number" id="text_tranfer_wax" class="form-control text-center"
+                              style="background-color: var(--title-background); color: var(--font-color);"
                               placeholder="0" value=""></div>
                           <div class="col-6"><input class="form-control text-center" type="text" id="to_acc"
+                              style="background-color: var(--title-background); color: var(--font-color);"
                               placeholder="xxx.wam" value=""></div>
                         </div>
                         <div class="col-12 mt-2"><button class="col-12 btn btn-primary" type="button" id="btn_transfer"
@@ -293,7 +327,7 @@
       <!-- Zone Bag -->
       <div class="col-12 col-md-6">
         <div class="card mt-2">
-          <div class="card-body">
+          <div class="card-body" style="background-color: var(--bg-color);">
             <div class="text-center">
               <div class="row">
                 <div class="col-12">
@@ -327,16 +361,16 @@
                       <div class="col-4"><span class="col-12 text-center">Equipment I</span></div>
                       <div class="col-4"><span class="col-12 text-center">Equipment II</span></div>
                       <div class="col-4"><span class="col-12 text-center">Equipment III</span></div>
-                      <!--div class="col-4"><input class="form-control text-center" type="text" id="text_set_bag_1"></div>
-                      <div class="col-4"><input class="form-control text-center" type="text" id="text_set_bag_2"></div>
-                      <div class="col-4"><input class="form-control text-center" type="text" id="text_set_bag_3"></div-->
-                      <div class="col-4"><select id="select_set_bag_1" style="width: 100%;">
+                      <div class="col-4"><select id="select_set_bag_1"
+                          style="width: 100%; background-color: var(--title-background); color: var(--font-color);">
                           <option value>Select</option>
                         </select></div>
-                      <div class="col-4"><select id="select_set_bag_2" style="width: 100%;">
+                      <div class="col-4"><select id="select_set_bag_2"
+                          style="width: 100%; background-color: var(--title-background); color: var(--font-color);">
                           <option value>Select</option>
                         </select></div>
-                      <div class="col-4"><select id="select_set_bag_3" style="width: 100%;">
+                      <div class="col-4"><select id="select_set_bag_3"
+                          style="width: 100%; background-color: var(--title-background); color: var(--font-color);">
                           <option value>Select</option>
                         </select></div>
                     </div>
@@ -355,7 +389,7 @@
       <!-- Zone Land -->
       <div class="col-12 col-md-6">
         <div class="card mt-2">
-          <div class="card-body">
+          <div class="card-body" style="background-color: var(--bg-color);">
             <div class="text-center">
               <div class="row">
                 <div class="col-12">
@@ -380,7 +414,9 @@
                   </div>
 
                   <div class="col-12 mt-2"><span class="col-12 text-center">Please enter Asset ID</span></div>
-                  <div class="col-12"><input type="text" class="form-control text-center" id="text_set_land"></div>
+                  <div class="col-12"><input type="text" class="form-control text-center"
+                      style="background-color: var(--title-background); color: var(--font-color);" id="text_set_land">
+                  </div>
                   <div class="col-12 mt-2"><button class="col-12 btn btn-warning" type="button" id="btn_set_land"
                       onclick="bott.moveland()">Move Land</button></div>
                 </div>
@@ -392,8 +428,21 @@
     </div>
   </div>
   <hr />
-
 </body>
+<footer class="footer text-center">
+  <div class="col">
+    <a class="btn btn-light mt-2" href="http://awstats.io/land/table" target="_blank">Search Land Asset ID </a>
+    <a id="wax_bloks" class="btn btn-light mt-2" onclick="waxbloxs()" target="_blank">Wax Bloks Account </a>
+    <a id="atomic_hub" class="btn btn-light mt-2" onclick="atomic()" target="_blank">Atomic Hub Inventory </a>
+    <a class="btn btn-light mt-2"
+      href="https://drive.google.com/file/d/1pdhw8Iyewyv6T26S9KWfXRlyWb5biOq6/view?usp=sharing"
+      target="_blank">Extension Auto Approve&Login</a>
+    <p class="fs-6 mt-2" style="color: aliceblue;"><u>Talk to Developer</u>
+      <a class="btn btn-warning" href="https://discord.gg/wSFm5Gmw" target="_blank">Awlight Discord</a>
+    </p>
+  </div>
+  <hr />
+</footer>
 <script src="js/jquery-3.6.0.js" crossorigin="anonymous"></script>
 <script src="./js/bundle.js" type="text/javascript"></script>
 <script src="./js/message_handler.js" type="text/javascript"></script>
@@ -435,29 +484,85 @@
       }
     });
   }
+  const themeToggle = document.querySelector('.theme-switch input[type="checkbox"]');
+  function switchTheme(e) {
+    if (e.target.checked) {
+      document.documentElement.setAttribute("data-theme", "dark");
+    } else {
+      document.documentElement.setAttribute("data-theme", "light");
+    }
+  }
+  themeToggle.addEventListener("change", switchTheme, false);
+
 </script>
+
 <script type="text/javascript">
 
   var loginzz = new loginz();
   var bott = new bot();
-  var botzz = new botz();  
+  var botzz = new botz();
   var allfunc = new allfunction();
 
 
   document.addEventListener("DOMContentLoaded", function (event) {
     loadConfig();
+    if (document.getElementById("themes").checked) {
+      document.documentElement.setAttribute("data-theme", "dark");
+    } else {
+      document.documentElement.setAttribute("data-theme", "light");
+    }
     setTimeout((() => {
-      loginnow()
+      autologinfunc()
     }), 500)
   });
 
-  async function loginnow() {
+  function atomic() {
+    var a = "https://wax.atomichub.io/profile/" + wax.userAccount
+    window.open(a)
+  }
+  function waxbloxs() {
+    var a = "https://wax.bloks.io/account/" + wax.userAccount
+    window.open(a)
+  }
+
+  async function autologinfunc() {
     if (document.getElementById("AutoLogin").checked == true) {
+      bott.appendMessage(`Function : Auto-Login [Start].`)
       loginzz.loginauto = true
       loginzz.autologinz()
+    } else {
+      loginzz.loginauto = false
+      bott.appendMessage(`Function : Auto-Login [Stop].`)
     }
   }
 
+  async function autominefunc() {
+    if (document.getElementById("AutoMineFunction").checked == true) {
+      bott.counttimestop = false
+      bott.appendMessage(`Function : Auto-Mining [Start].`)
+      bott.delay(5000)
+      if (document.getElementById("AutoMineFunction").checked == true) { bott.mineDelay() }
+    } else {
+      bott.counttimestop = true
+      bott.appendMessage(`Function : Auto-Mining [Stop].`)
+    }
+  }
+
+  async function autoclaimsfunc() {
+    if (document.getElementById("auto-claimnfts").checked == true) {
+      bott.appendMessage(`Function : Auto-Check&Claims [Start].`)
+    } else {
+      bott.appendMessage(`Function : Auto-Check&Claims [Stop].`)
+    }
+  }
+
+  async function autoswaptransferfunc() {
+    if (document.getElementById("auto-SwapTransfer").checked == true) {
+      bott.appendMessage(`Function : Auto-Swap&Transfer [Start].`)
+    } else {
+      bott.appendMessage(`Function : Auto-Swap&Transfer [Stop].`)
+    }
+  }
 
 
   async function botMine() {
@@ -484,7 +589,7 @@
       alert("userAccount isEmpty")
     }
   }
-  
+
   async function MoreInfoAll() {
     const userAccount = document.getElementById("text-user").innerHTML
     if (userAccount != '' && userAccount != 'xxx.wax') {
@@ -508,6 +613,7 @@
       document.getElementById("auto-claimnfts").checked = config.autoClaimnfts
       document.getElementById("auto-SwapTransfer").checked = config.autoSwapTransfer
       document.getElementById("AutoLogin").checked = config.AutoLogin
+      document.getElementById("themes").checked = config.themes
       //document.getElementById("swapauto").checked = config.swapauto
       document.getElementById(config.server).checked = true
     } else {
@@ -520,11 +626,13 @@
       document.getElementById("auto-claimnfts").checked = true
       document.getElementById("auto-SwapTransfer").checked = false
       document.getElementById("AutoLogin").checked = true
+      document.getElementById("themes").checked = false
     }
   }
 
   const saveConfig = () => {
     const config = {
+      themes: document.getElementById("themes").checked,
       cpu: document.getElementById("cpu").value,
       MinedOuttime: document.getElementById("MinedOuttime").value,
       AutoRestartFunction: document.getElementById("AutoRestartFunction").checked,
@@ -542,12 +650,12 @@
 
   async function BtnSwaptoTransfer() {
     Swal.fire({
-        icon: 'info',
-        title: 'Please wait...',
-        html: '[Swap & Transfer] System in progress!',
-        showConfirmButton: false,
-        timer: 5000
-      })    
+      icon: 'info',
+      title: 'Please wait...',
+      html: '[Swap & Transfer] System in progress!',
+      showConfirmButton: false,
+      timer: 5000
+    })
     const balance = await getBalance(wax.userAccount, wax.api.rpc);
     const balanceTLM = parseFloat(balance).toFixed(4) - 0.0001
     const amountToST = parseFloat(document.getElementById("amountToST").value)
@@ -609,12 +717,12 @@
               if (results && results.processed) {
                 bott.appendMessage(`Success : Transfer ${amount} WAX From ${account} To ${toAcc}`)
                 Swal.fire({
-        icon: 'success',
-        title: 'Success',
-        html: '[Swap & Transfer] The system executed successfully.',
-        showConfirmButton: false,
-        timer: 2000
-      })    
+                  icon: 'success',
+                  title: 'Success',
+                  html: '[Swap & Transfer] The system executed successfully.',
+                  showConfirmButton: false,
+                  timer: 2000
+                })
                 return `Transfer ${amount} WAX from ${account} to ${toAcc}`
               }
             }

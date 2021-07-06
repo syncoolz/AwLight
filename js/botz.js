@@ -24,15 +24,17 @@ class botz {
                     }
                     countMonitorRealtime()
                 }
-            }, {
+            },/* {
                 id: 'AI_DetectError',       // unique ID of the task                
                 tickInterval: 300,   // run every 10 ticks (10 x interval = 10000 ms)
                 totalRuns: 0,       // run 2 times only. (set to 0 for unlimited times)
                 callback(task) {
                     console.log(`${task.id} START.`);
+                    if (document.getElementById('AutoRestartFunction').checked == true) {
                     loginzz.detectError()
+                    }
                 }
-            }
+            }*/
         ]);
         timerMonitorRealtime.start()
     }
@@ -49,7 +51,7 @@ class botz {
                         showConfirmButton: false,
                         timer: 5000
                     }) */
-                bott.appendMessage(`Restart when it takes more than ${timeleft} sec.)`)
+                bott.appendMessage(`Status : When mining takes too long ${timeleft} sec. (Auto reload)`)
                 const timerMiningCheck = new TaskTimer(1000);
                 timerMiningCheck.add([
                     {
@@ -76,7 +78,7 @@ class botz {
                             document.getElementsByTagName('title')[0].text = `Mining.. ${Math.ceil(task.totalRuns - task.currentRuns)} Sec`
                             if (waitStatus != document.getElementById("text-cooldown").innerHTML) {
                                 timerMiningCheck.stop()
-                                loginzz.detectError()
+                                //loginzz.detectError()
                             }
                         }
                     }

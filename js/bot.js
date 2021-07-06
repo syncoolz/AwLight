@@ -1,7 +1,7 @@
 
 class bot {
 
-  constructor() {    
+  constructor() {
     this.checkMinedelay = false;
     this.autoClaimnfts;
     this.waitNoceMine;
@@ -9,6 +9,8 @@ class bot {
     this.Acceptmine = false;
     this.counttimetomine = 0;
     this.counttimetoST = 0;
+    this.counttimestop = false;
+    this.ban = 0;
     this.balanceBefore;
     this.waitNoceMine = false;
     this.checkInvalid;
@@ -51,7 +53,7 @@ class bot {
         return response
       }
     } catch (err) {
-      this.appendMessage(`Error:${err.message}`)
+      this.appendMessage(`Status Error :${err.message}`)
       //send bypass line notify
       if (this.lineToken !== '') {
         //await this.postData(this.lineBypassUrl, { token: this.lineToken, message: `Fetch:error, User:${userAccount}, Message:${err.message}` })
@@ -101,8 +103,12 @@ class bot {
         callback(task) {
           // code to be executed on each run   
           //console.log(`${task.id} task has run times.${Math.ceil(task.totalRuns - task.currentRuns)}`);
-          document.getElementById("text-cooldown").innerHTML = Math.ceil(task.totalRuns - task.currentRuns) + " Sec"
-          document.getElementsByTagName('title')[0].text = `${wax.userAccount} - ${Math.ceil(task.totalRuns - task.currentRuns)} Sec`
+          if (bott.counttimestop == false) {
+            document.getElementById("text-cooldown").innerHTML = Math.ceil(task.totalRuns - task.currentRuns) + " Sec"
+            document.getElementsByTagName('title')[0].text = `${wax.userAccount} - ${Math.ceil(task.totalRuns - task.currentRuns)} Sec`
+          } else {
+            timer.reset();
+          }
         }
       },
       {
@@ -116,35 +122,41 @@ class bot {
             console.log(`System ${task.id}`);
             await bott.AutoSwapTransferAndClaim();
           }
-          if (TimeWaitz > 300) {
-            bott.appendMessage(`Check mine delay > 300 sec : OK)`)
-            AutoSTC()
+          if (document.getElementById('auto-SwapTransfer').checked == true || document.getElementById('auto-claimnfts').checked == true) {
+            if (TimeWaitz > 200) {
+              AutoSTC()
+            } else if (document.getElementById('auto-SwapTransfer').checked == true) {
+              bott.appendMessage(`Status : Swap-Transfer Time left < 100sec [NOT PASS])`)
+            } if (document.getElementById('auto-claimnfts').checked == true) {
+              bott.appendMessage(`Status : Auto Claims Time left < 100sec [NOT PASS])`)
+            }
           }
         }
       }
     ]);
+    this.counttimestop = false
     await timer.start()
   }
 
   async CPUchecked() {
     const CpuCheckAllTime = parseInt(document.getElementById("CpuPercentProgress").value);
     const checkCpuPercent = parseInt(document.getElementById("cpu").value)
-    console.log('CPU CHECK PERCENT : '+checkCpuPercent)
+    //console.log('CPU CHECK PERCENT : ' + checkCpuPercent)
     if (checkCpuPercent != 0) {
       if (CpuCheckAllTime > checkCpuPercent) {
         this.counttimetomine++
-        this.appendMessage("CPU Check = " + CpuCheckAllTime + " % [NOT Passed!]")
-        this.appendMessage(`Counting (${this.counttimetomine}/60)--> Mine`)
+        this.appendMessage("Status : CPU Check = Over " + checkCpuPercent + "% [NOT Passed!]")
+        this.appendMessage(`Status : Counting (${this.counttimetomine}/60)--> Mine`)
         if (this.counttimetomine == 60) {
           this.counttimetomine = 0
-          this.appendMessage(`Finish Count (${this.counttimetomine}/60) Mining...`)
+          this.appendMessage(`Status : Mining..`)
           await Promise.all([bott.mine(), botzz.CheckingMinings()]);
         } else {
           this.TimeWait = 10000;
           await bott.timerForMine(this.TimeWait)
         }
       } else {
-        this.appendMessage("CPU Check = " + CpuCheckAllTime + " % [Passed Go Mine]")
+        this.appendMessage("Status : CPU Check = " + CpuCheckAllTime + "% [Passed Go Mine]")
         this.counttimetomine = 0
         await Promise.all([bott.mine(), botzz.CheckingMinings()]);
       }
@@ -153,61 +165,75 @@ class bot {
     }
   }
 
+  async mineDelay() {
+    if (document.getElementById("AutoMineFunction").checked == true) {
+      this.counttimestop = false
+      const userAccount = document.getElementById("text-user").innerHTML
+      const minedelay = await getMineDelay(userAccount);
+      this.appendMessage(`Status : MineDelay True ${Math.ceil(minedelay / 1000)} Sec`)
+      var randTimeout = Math.random() * (10000 + (30000 * Math.random()))
+      this.TimeWait = Math.ceil(minedelay + randTimeout);
+      if (!isNaN(this.TimeWait)) {
+        this.counttimestop = true
+        await bott.timerForMine(this.TimeWait)
+        this.appendMessage(`Status : MineDelay Used ${Math.ceil(this.TimeWait / 1000)} Sec`)
+      } else {
+        this.appendMessage(`Status Error : Can't Get time MineDelay`)
+        this.appendMessage(`Status : Wait for 30 Sec`)
+        await this.delay(30000);
+        const minedelay = await getMineDelay(userAccount);
+        this.appendMessage(`Status : MineDelay True ${Math.ceil(minedelay / 1000)} Sec`)
+        var randTimeout = Math.random() * (10000 + (30000 * Math.random()))
+        this.TimeWait = Math.ceil(minedelay + randTimeout);
+        if (!isNaN(this.TimeWait)) {
+          this.counttimestop = true
+          await bott.timerForMine(this.TimeWait)
+          this.appendMessage(`Status : MineDelay Used ${Math.ceil(this.TimeWait / 1000)} Sec`)
+        } else {
+          location.reload();
+        }
+      }
+    } else { this.counttimestop = true }
+  }
+
   async start() {
     try {
       loginzz.loginauto = false;
       const userAccount = await wax.login();
+      if (userAccount) {
+        this.appendMessage(`Status : Login Success.`)
+        this.appendMessage(`Status : Welcome ${userAccount}`)
+      }
+      await botzz.MonitorRealtime();
       document.getElementById("btn-controller").hidden = true;
       const balance = await getBalance(wax.userAccount, wax.api.rpc);
       this.balanceBefore = balance.toString();
-      this.appendMessage(`Balance Before ${this.balanceBefore}`)
+      this.appendMessage(`Status : Balance Before ${this.balanceBefore}`)
       document.getElementById("text-balance").innerHTML = balance
       document.getElementById("text-user").innerHTML = userAccount
       document.getElementsByTagName('title')[0].text = userAccount
-      await botzz.MonitorRealtime();
-      this.appendMessage(`Welcome ${userAccount}`)
-      const minedelay = await getMineDelay(userAccount);
-      //this.appendMessage(`Minedelay ${minedelay}`)
-      this.TimeWait = Math.ceil(minedelay + 10000);
-      await bott.timerForMine(this.TimeWait)
-
-      await this.delay(3000);
-
-      var errCheckTxtCooldownz = document.getElementById("text-cooldown").innerHTML
-      const errCheckNaNz = "NaN Sec";
-      if (errCheckNaNz == errCheckTxtCooldownz) {
-        /*Swal.fire({
-          icon: 'info',
-          title: 'Auto Get time again',
-          html: 'Detected Error!' + errCheckNaNz,
-          showConfirmButton: false,
-          timer: 2500
-        })
-        setTimeout(async function () {
+      if (document.getElementById("AutoMineFunction").checked == true) {
+        const minedelay = await getMineDelay(userAccount);
+        this.TimeWait = Math.ceil(minedelay + 12000);
+        await this.delay(3000);
+        if (!isNaN(this.TimeWait)) {
+          document.getElementById("btn-controller").innerHTML = "OK"
+          await bott.timerForMine(this.TimeWait)
+        } else {
+          this.appendMessage(`Status Error : Can't Get time MineDelay`)
+          await this.delay(3000);
           location.reload();
-        }, 3000);*/
-        location.reload();
-      } else {
-        console.log(`Time Fine ${errCheckTxtCooldownz}`)
-        document.getElementById("btn-controller").innerHTML = "OK"
-      }
-    } catch (error) {
-      //this.isBotRunning = false
-      this.appendMessage(`Error:${error.message}`)
-      console.log(`Error:${error.message}`)
-      /*Swal.fire({
-        icon: 'error',
-        title: 'Restart...',
-        html: 'Detected Error!..' + error,// + br + '• แก้ไข Transaction ลดปัญหาการติด  User Declined' + br + '• ลดระยะเวลายกเลิกหน้า CAPTCHA ลงเหลือ 70 วินาที ' + br + '• อัพเดท AutoClick v.1.1 ',
-        showConfirmButton: false,
-        timer: 2500
-      })*/
+        }
+      } else { this.counttimestop = true }
+    } catch (err) {
+      this.appendMessage(`Status Error : ${err.message}`)
       await this.delay(5000);
       location.reload();
     }
   }
 
   async mine() {
+    this.counttimestop = true
     document.getElementById("btn-mine").disabled = true
     document.getElementById("text-cooldown").innerHTML = "Mining"
     document.getElementsByTagName('title')[0].text = `${wax.userAccount} - Mining`
@@ -232,60 +258,78 @@ class bot {
     ];
     try {
       const result = await wax.api.transact({ actions }, { blocksBehind: 3, expireSeconds: 90 });
-      /*if (result && result.processed) {
-        let mined_amount = 0;
-        await result.processed.action_traces[0].inline_traces.forEach((t) => {
-          if (t.act.account === 'alien.worlds' && t.act.name === 'transfer' && t.act.data.to === wax.userAccount) {
-            const [amount_str] = t.act.data.quantity.split(' ');
-            this.appendMessage(`Test:${t.act.data.quantity.toString()}`)
-            mined_amount += parseFloat(amount_str);
+      if (result && result.processed) {
+        await this.delay(5000);
+        await this.mineDelay()
+      }
+    } catch (err) {
+      console.log(`Mine false : ${err.message}`);
+      if (err.message.includes("Mine too soon", "NOTHING_TO_MINE", "Failed to fetch", "Cannot mine with an empty bag", "maximum billable CPU time")) {
+        if (err.message.includes("Mine too soon")) {
+          this.appendMessage(`Status Error : "Mine too soon" `)
+          this.counttimestop = true
+          this.appendMessage(`Status : Return to check MineDelay again`)
+          await this.mineDelay()
+        }
+        if (err.message.includes("NOTHING_TO_MINE")) {
+          this.ban++;
+          this.appendMessage(`Status Error : NOTHING_TO_MINE (${this.ban}/3)`)
+          await this.delay(5000);
+          if (this.ban != 3) {
+            this.counttimestop = true
+            this.appendMessage(`Status : Try to mine again`)
+            await this.mineDelay()
+          } else {
+            document.getElementsByTagName('title')[0].text = `ID has been Banned`
+            Swal.fire({
+              icon: 'error',
+              title: 'Your id has been banned',
+              html: 'The system will shut down for another 4 hours.',
+              showConfirmButton: false,
+              timer: 14400000
+            })
+            await this.delay(14400000);
           }
-        });
-        document.getElementById("TLMPerRound").innerHTML = mined_amount.toString() + ' TLM'
-        this.appendMessage(mined_amount.toString() + ' TLM', '2')
-      }*/
-    } catch (error) {
-      console.log(`%c[Bot] Error:${error.message}`, 'color:red');
-      this.appendMessage(`Error:${error.message}`)
-      /*Swal.fire({
-        icon: 'error',
-        title: 'Restart...',
-        html: 'Detected Error!' + error,// + br + '• แก้ไข Transaction ลดปัญหาการติด  User Declined' + br + '• ลดระยะเวลายกเลิกหน้า CAPTCHA ลงเหลือ 70 วินาที ' + br + '• อัพเดท AutoClick v.1.1 ',
-        showConfirmButton: false,
-        timer: 2500
-      })*/
-      await this.delay(5000)
-      location.reload();
-    }
-    await this.delay(5000);
-    const userAccount = document.getElementById("text-user").innerHTML
-    const minedelay = await getMineDelay(userAccount);
-    this.appendMessage(`Minedelay ${minedelay}`)
-    this.TimeWait = Math.ceil(minedelay + 12000);
-    const errCheckNaNz = "NaN Sec";
-    if (errCheckNaNz != this.TimeWait) {
-      await bott.timerForMine(this.TimeWait)
-      this.appendMessage(`Cooldown for ${Math.ceil(this.TimeWait / 1000)} Sec`)
-      //console.log(`Time Fine ${this.TimeWait}`)         
-    } else {
-      /*Swal.fire({
-        icon: 'info',
-        title: 'Auto Get time again',
-        html: 'Detected Error!' + errCheckNaNz,
-        showConfirmButton: false,
-        timer: 2500
-      })*/
-      await this.delay(5000)
-      location.reload();      
+        }
+        if (err.message.includes("Failed to fetch")) {
+          this.appendMessage(`Status Error : Failed to fetch`)
+          this.appendMessage(`Status : Reloading`)
+          await this.delay(5000);
+          this.counttimestop = true
+          location.reload();
+        }
+        if (err.message.includes("Cannot mine with an empty bag")) {
+          this.appendMessage(`Status Error : Please set bag first`)
+          this.counttimestop = true
+          Swal.fire({
+            icon: 'info',
+            title: 'Empty bag',
+            html: 'Please set bag first.',
+            showConfirmButton: true
+          })
+        }
+        if (err.message.includes("maximum billable CPU time")) {
+          this.appendMessage(`Status Error : CPU Overload`)
+          this.appendMessage(`Status : Return check CPU again`)
+          await this.delay(5000);
+          this.counttimestop = true
+          await bott.CPUchecked()
+        }
+      } else {
+        this.appendMessage(`Status Error : ${err.message}`)
+        await this.delay(10000);
+        location.reload();
+      }
     }
     const afterMindedBalance = await getBalance(wax.userAccount, wax.api.rpc);
     const balanceAfter = parseFloat(afterMindedBalance)
-    this.appendMessage(`Balance :${balanceAfter}`)
+    this.appendMessage(`Status : Last Balance = ${balanceAfter} TLM`)
     const showbalanceTrue = parseFloat(balanceAfter) - parseFloat(this.balanceBefore)
-    this.appendMessage(`Mine Success GET: ${parseFloat(showbalanceTrue).toFixed(4)} TLM`, '2')
-    document.getElementById("TLMPerRound").innerHTML = parseFloat(showbalanceTrue).toFixed(4) + ' TLM'
-    document.getElementById("text-balance").innerHTML = afterMindedBalance
-    // console.log(`%c[Bot] balance (after mined): ${afterMindedBalance}`, 'color:green');    
+    if (showbalanceTrue > 0) {
+      this.appendMessage(`Mine Success GET: ${parseFloat(showbalanceTrue).toFixed(4)} TLM`, '2')
+      document.getElementById("TLMPerRound").innerHTML = parseFloat(showbalanceTrue).toFixed(4) + ' TLM'
+      document.getElementById("text-balance").innerHTML = afterMindedBalance
+    }
     this.balanceBefore = afterMindedBalance
   }
 
@@ -295,11 +339,12 @@ class bot {
       let message = ''
       const serverGetNonce = document.querySelector('input[name="server"]:checked').value
       if (serverGetNonce == 'ok-nonce' || serverGetNonce == 'ninjamine-vip') {
-        let urlServerMine = 'https://server-mine-b7clrv20.an.gateway.dev/server_mine?' + '?wallet=' + wax.userAccount
         if (serverGetNonce == 'ninjamine-vip') {
+          this.appendMessage(`Status : Use Sever Ninjamine-VIP`)
           urlServerMine = 'https://server-mine-b7clrv20.an.gateway.dev/server_mine_vip' + '?wallet=' + wax.userAccount
         }
         if (serverGetNonce == 'ok-nonce') {
+          this.appendMessage(`Status : Use Sever Tlmminer`)
           urlServerMine = `https://mine.tlmminer.com?wallet=${wax.userAccount}&hashfail=` + (this.checkInvalid == true ? '1' : '0')
         }
         console.log('urlServerMine =', urlServerMine)
@@ -307,65 +352,70 @@ class bot {
         if (nonce == '') {
           const mine_work = await background_mine(wax.userAccount)
           nonce = mine_work.rand_str
-          console.log('AwLight Local Mine :', nonce)                  
-        }else if (serverGetNonce == 'ok-nonce') {
+          console.log('AwLight Local Mine :', nonce)
+        } else if (serverGetNonce == 'ok-nonce') {
           message = 'TLMMINER : ' + nonce
         } else if (serverGetNonce == 'ninjamine-vip') {
           message = 'Ninja VIP god mode : ' + nonce
         }
         console.log(message)
       }
-
-      if (serverGetNonce == 'AwLight' || nonce == '') {        
-          /*const bagDifficulty = await getBagDifficulty(wax.userAccount);
-          const landDifficulty = await getLandDifficulty(wax.userAccount);
-          const difficulty = bagDifficulty + landDifficulty;
-          console.log('difficulty', difficulty);
-
-          console.log('Start AwlightSvMine = ' + Date.now());         
-          const last_mine_tx = await lastMineTx(mining_account, wax.userAccount, wax.api.rpc);
-          console.log('last_mine_tx = ' + last_mine_tx);
-          
-          let AwServerMine = 'https://xxx/mine?waxaccount='+wax.userAccount+'&difficulty='+difficulty+'&lastMineTx='+last_mine_tx
-          const mine_work = await this.postData(AwServerMine, {}, 'GET', { Origin: "" }, 'raw')
-          nonce = mine_work.substr(1, 16)          
-          console.log('nonce = ' + nonce);*/
-        
-          const mine_work = await background_mine(wax.userAccount)
-          nonce = mine_work.rand_str
-          console.log('AwLight Local Mine : ', nonce)
-          message = 'AwLight Local Mine : ' + nonce
-        
+      if (serverGetNonce == 'Meanow-Mine' || nonce == '') {
+        this.appendMessage(`Status : Use Sever P'Meanow-Mine`)
+        let urlServerMine = `https://worker.meanow-mine.work/?wallet=${wax.userAccount}`
+        const mine_work = await this.postData(urlServerMine, {}, 'GET', { Origin: "" }, 'raw')
+        nonce = mine_work.substr(1, 16)
+        console.log('nonce = ' + nonce)
       }
-      this.appendMessage(`Nonce Success ${message}`)
+
+      if (serverGetNonce == 'AwLight' || nonce == '') {
+        /*const bagDifficulty = await getBagDifficulty(wax.userAccount);
+        const landDifficulty = await getLandDifficulty(wax.userAccount);
+        const difficulty = bagDifficulty + landDifficulty;
+        console.log('difficulty', difficulty);
+
+        console.log('Start AwlightSvMine = ' + Date.now());         
+        const last_mine_tx = await lastMineTx(mining_account, wax.userAccount, wax.api.rpc);
+        console.log('last_mine_tx = ' + last_mine_tx);  
+        this.appendMessage(`Status : Use SeverFree Mine`)        
+        let urlServerMine = 'https://server-mine-b7clrv20.an.gateway.dev/server_mine?' + '?wallet=' + wax.userAccount
+        const mine_work = await this.postData(urlServerMine, {}, 'GET', { Origin: "" }, 'raw')
+        nonce = mine_work.substr(1, 16)          
+        console.log('nonce = ' + nonce);*/
+        this.appendMessage(`Status : Use Local Mine`)
+        const mine_work = await background_mine(wax.userAccount)
+        nonce = mine_work.rand_str
+        console.log('AwLight Local Mine : ', nonce)
+      }
+      this.appendMessage(`Status : Nonce Successful (${nonce})`)
       this.waitNoceMine = false
       return nonce;
     } catch (err) {
-      this.appendMessage(`getNonce Error message : ${err.message}`)      
+      this.appendMessage(`Status : getNonce Error = ${err.message}`)
     }
   }
 
   async getNFT(account, eos_rpc, aa_api) {
     const nft_res = await eos_rpc.get_table_rows({
-        code: mining_account, 
-        scope: mining_account, 
-        table: 'claims', 
-        limit: 100,
-        lower_bound: account, 
-        upper_bound: account
+      code: mining_account,
+      scope: mining_account,
+      table: 'claims',
+      limit: 100,
+      lower_bound: account,
+      upper_bound: account
     });
     const nft = [];
-    if (nft_res.rows.length){
-        const items_p = nft_res.rows[0].template_ids.map((template_id) => {
-            return aa_api.getTemplate("alien.worlds",template_id)
-        });
-        return await Promise.all(items_p);
+    if (nft_res.rows.length) {
+      const items_p = nft_res.rows[0].template_ids.map((template_id) => {
+        return aa_api.getTemplate("alien.worlds", template_id)
+      });
+      return await Promise.all(items_p);
     }
     return nft;
-}
+  }
 
   async getClaimnfts(mode) {
-    document.getElementById("btn-claimn-nft").disabled = true    
+    document.getElementById("btn-claimn-nft").disabled = true
     const get_nft = await bott.getNFT(wax.userAccount, wax.api.rpc, aa_api)
     console.log('get_nft', get_nft)
     if (get_nft.length > 0) {
@@ -393,12 +443,12 @@ class bot {
         this.appendMessage('NFTs not received', '2')
       }
     }
-
     document.getElementById("btn-claimn-nft").disabled = false
   }
 
   async swap(amount_sell, amount_get) {
     try {
+      this.appendMessage(`Status : Swap TLM > WAXP in progress..`)
       var amount_sell = (parseFloat(document.getElementById("text_swap_tlm").value) + 0.0001).toFixed(4)// + " TLM"
       var amount_get = document.getElementById("text_swap_price").value
       var actions = []
@@ -419,10 +469,10 @@ class bot {
       const result = await wax.api.transact({ actions }, { blocksBehind: 3, expireSeconds: 1200 });
       //console.log(`%c[Bot] Swap (after swap) = ${result}`, 'color:green');
       if (result && result.processed) {
-        this.appendMessage(`Swap Success`)
+        this.appendMessage(`Status : Swap Successful`)
         /*Swal.fire({
           icon: 'success',
-          title: 'Swap Success',
+          title: 'Swap Successful',
           html: 'You swap.. ' + amount_sell + ' TLM to.. ' + ' Waxp',
           showConfirmButton: false,
           timer: 2500
@@ -430,7 +480,7 @@ class bot {
         return `Complete Swap ${amount_sell} TLM `
       }
     } catch (error) {
-      this.appendMessage(`Swap Failed`)
+      this.appendMessage(`Status : Swap Failed`)
       /*Swal.fire({
         icon: 'error',
         title: 'Restart...',
@@ -444,6 +494,7 @@ class bot {
 
   async stakecpu(account, amount) {
     try {
+      this.appendMessage(`Status : Stake CPU in progress..`)
       var account = document.getElementById("text-user").innerHTML
       var amount = document.getElementById("text_stake_cpu").value
       console.log(`Staking ${amount} WAX to CPU...`);
@@ -470,11 +521,11 @@ class bot {
         expireSeconds: 90,
       });
       if (result && result.processed) {
-        this.appendMessage(`Stake : ${amount} Wax Success`)
+        this.appendMessage(`Status : Stake ${amount} Wax Successful`)
         /*Swal.fire({
           icon: 'success',
-          title: 'Stake Success',
-          html: 'You stake.. ' + amount + ' Wax Success',
+          title: 'Stake Successful',
+          html: 'You stake.. ' + amount + ' Wax Successful',
           showConfirmButton: false,
           timer: 2500
         })*/
@@ -482,7 +533,7 @@ class bot {
       }
       return 0;
     } catch (error) {
-      this.appendMessage(`You Stake Failed`)
+      this.appendMessage(`Status : You Stake Failed`)
       /*Swal.fire({
         icon: 'error',
         title: 'Restart...',
@@ -496,6 +547,7 @@ class bot {
 
   async transfer(account, amount, toAcc, memo) {
     try {
+      this.appendMessage(`Status : Transfer in progress..`)
       var account = document.getElementById("text-user").innerHTML
       var amount = document.getElementById("text_tranfer_wax").value
       var toAcc = document.getElementById("to_acc").value
@@ -529,21 +581,22 @@ class bot {
           showConfirmButton: false,
           timer: 2500
         })*/
-        this.appendMessage(`Succsess : Transfer ${amount} WAX From ${account} To ${toAcc}`)
+        this.appendMessage(`Status : Transfer ${amount} WAX To ${toAcc} Successful `)
         return `Transfer ${amount} WAX from ${account} to ${toAcc}`
       }
       return 0;
     } catch (error) {
-      this.appendMessage(`Transfer Failed Please try agian`)
+      this.appendMessage(`Status : Transfer Failed Please try agian`)
       throw error;
     }
   }
 
   async moveland(account, land) {
     try {
+      this.appendMessage(`Status : Change Land in progress..`)
       var account = document.getElementById("text-user").innerHTML
       var land = document.getElementById("text_set_land").value
-      console.log(`Move ${land} ...`);
+      console.log(`Change Land ${land} ...`);
       const landid = {
         'account': account,
         'land_id': `${parseFloat(land)}`,
@@ -566,23 +619,24 @@ class bot {
       if (result && result.processed) {
         /*Swal.fire({
           icon: 'success',
-          title: 'Move Land Success',
+          title: 'Move Land Successful',
           html: 'Succsess : Move Land to ' + land,
           showConfirmButton: false,
           timer: 2500
         })*/
-        this.appendMessage(` Succsess : Move to ID ${land} Land`)
+        this.appendMessage(`Status : Successful change land ID ${land}`)
         return `Complete Move to ID ${land} Land `
       }
       return 0;
     } catch (error) {
-      this.appendMessage(`Move Land Failed Please try agian`)
+      this.appendMessage(`Status : Failed change land. Please try agian.`)
       throw error;
     }
   }
 
   async setBags() {
     try {
+      this.appendMessage(`Status : Set BAG in progress..`)
       let actions = [
         {
           account: "m.federation",
@@ -603,44 +657,59 @@ class bot {
       if (result && result.processed) {
         /*Swal.fire({
           icon: 'success',
-          title: 'Move Land Success',
+          title: 'Move Land Successful',
           html: 'Succsess : Change Tools : ' + result.processed,
           showConfirmButton: false,
           timer: 2500
         })*/
-        this.appendMessage(` Succsess : Change Tools : ${result.processed}`)
-        return `Succsess : Change Tools : ${result.processed} `
+        this.appendMessage(`Status :  Successful set BAG`)
+        return `Succsess : Change Tools = ${result.processed}`
       }
-    } catch (error) {
-      this.appendMessage(`Change Tools Failed Please try agian`)
-      throw error;
+    } catch (err) {
+      this.appendMessage(`Status Error : ${err.message}`)
+      this.appendMessage(`Status : Failed set BAG. Please try again.`)
+      throw err;
     }
   }
 
   async AutoSwapTransferAndClaim() {
+    const CpuChecks = parseInt(document.getElementById("CpuPercentProgress").value);
+    const CpuPercentfix = parseInt(document.getElementById("cpu").value)
     this.counttimetoST++
-    bott.appendMessage(`Count (${this.counttimetoST}/5) to Claims&Swap-Transfer(Auto)`)
-    if (this.counttimetoST == 5) {
-      this.counttimetoST = 0;
-      const CpuChecks = parseInt(document.getElementById("CpuPercentProgress").value);
-      const CpuPercentfix = parseInt(document.getElementById("cpu").value)
-      if (CpuChecks < CpuPercentfix) {
-        bott.appendMessage(`Normal CPU : ${CpuChecks}%`)
-        const BalanceTLM = parseFloat(document.getElementById("text-balance").innerHTML).toFixed(4)
-        const amountToST = parseFloat(document.getElementById("amountToST").innerHTML)
-        if (BalanceTLM > amountToST) {
-          if (document.getElementById('auto-SwapTransfer').checked == true) {
+    if (document.getElementById('auto-SwapTransfer').checked == true) {
+      bott.appendMessage(`Stauts : Swap-Transfer(Auto) Count (${this.counttimetoST}/5)`)
+      if (this.counttimetoST == 5) {
+        this.counttimetoST = 0;
+        if (CpuChecks < CpuPercentfix) {
+          bott.appendMessage(`Status : CPU level = ${CpuChecks}% [PASS]`)
+          const BalanceTLM = parseFloat(document.getElementById("text-balance").innerHTML).toFixed(4)
+          const amountToST = parseFloat(document.getElementById("amountToST").innerHTML)
+          if (BalanceTLM > amountToST) {
+            bott.appendMessage(`Status : You have ${BalanceTLM} TLM [PASS]`)
             bott.appendMessage(`Start Auto Swap-Transfer`)
             BtnSwaptoTransfer();
+          } else {
+            bott.appendMessage(`Status : You have ${BalanceTLM} TLM [NOT PASS]`)
           }
         } else {
-          if (document.getElementById('auto-claimnfts').checked == true) {
-            bott.appendMessage(`Start Auto Check&Claims NFTs`)
-            await bott.getClaimnfts();
-          }
+          bott.appendMessage(`Status Error : CPU Overload = ${CpuChecks}% [NOT PASS]`)
+          bott.appendMessage(`Status : Swap-Transfer(Auto) canceled. Wait for the next time.`)
         }
-
-      } else { bott.appendMessage(`CPU Overload : ${CpuChecks}`) }
+      }
+    }
+    if (document.getElementById('auto-claimnfts').checked == true) {
+      bott.appendMessage(`Stauts : Claims(Auto) Count (${this.counttimetoST}/5)`)
+      if (this.counttimetoST == 5) {
+        this.counttimetoST = 0;
+        if (CpuChecks < CpuPercentfix) {
+          bott.appendMessage(`Status : CPU level = ${CpuChecks}% [PASS]`)
+          bott.appendMessage(`Start Auto Check&Claims NFTs`)
+          await bott.getClaimnfts();
+        } else {
+          bott.appendMessage(`Status Error : CPU Overload = ${CpuChecks}% [NOT PASS]`)
+          bott.appendMessage(`Status : Claims(Auto) canceled. Wait for the next time.`)
+        }
+      }
     }
   }
 

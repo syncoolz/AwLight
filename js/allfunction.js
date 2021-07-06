@@ -43,11 +43,22 @@ class allfunction {
         let id_stacks = parseFloat(accountDetail.total_resources.cpu_weight).toFixed(4).toString() + " WAX"
         if (accountDetail) {
             document.getElementById("info-stake-balance").innerHTML = id_stacks
-
         }
     }
 
     async SetBagInfo() {
+        let accountDetail = await bott.postData('https://wax.api.atomicassets.io/atomicassets/v1/assets?collection_name=alien.worlds&owner=' + wax.userAccount + '&limit=100&schema_name=tool.worlds', {}, 'GET')
+        if (accountDetail) {
+            let i = 0;
+            let selectBag = ''
+            for (let token of accountDetail.data) {                
+                selectBag += `<option value="${token.asset_id}"> ${token.asset_id} - ${token.name}</option>`                                  
+                i++;
+            }                  
+            document.getElementById("select_set_bag_1").insertAdjacentHTML('beforeend',selectBag)
+            document.getElementById("select_set_bag_2").insertAdjacentHTML('beforeend',selectBag)
+            document.getElementById("select_set_bag_3").insertAdjacentHTML('beforeend',selectBag)
+        }       
         const body = {
             "json": true,
             "code": "m.federation",
@@ -67,19 +78,7 @@ class allfunction {
             document.getElementById("BagImage" + i).src = 'https://ipfs.io/ipfs/' + qq.data.data.img; 
             document.getElementById("BagAsset" + i).innerHTML = item           
             i++;
-        }
-        let accountDetail = await bott.postData('https://wax.api.atomicassets.io/atomicassets/v1/assets?collection_name=alien.worlds&owner=' + wax.userAccount + '&limit=100&schema_name=tool.worlds', {}, 'GET')
-        if (accountDetail) {
-            let i = 0;
-            let selectBag = ''
-            for (let token of accountDetail.data) {                
-                selectBag += `<option value="${token.asset_id}"> ${token.asset_id} - ${token.name}</option>`                                  
-                i++;
-            }                  
-            document.getElementById("select_set_bag_1").insertAdjacentHTML('beforeend',selectBag)
-            document.getElementById("select_set_bag_2").insertAdjacentHTML('beforeend',selectBag)
-            document.getElementById("select_set_bag_3").insertAdjacentHTML('beforeend',selectBag)
-        }       
+        }        
     }
 
     async SetLandInfo() {

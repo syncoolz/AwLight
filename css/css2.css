@@ -5,3 +5,129 @@
   font-display: swap;
   src: url(../fonts/nKKZ-Go6G5tXcoaS.ttf) format('truetype');
 }
+.card-product {
+  box-shadow: 0 2px 6px 0 rgba(33, 1, 179, 0.07);
+  border-bottom: 3px solid rgb(210, 13, 13);
+}
+
+:root {
+  --bg-color: #ffffff;
+  --font-color: #222;
+  --title-color: #0067e6;
+  --title-background: rgb(231, 231, 231);
+  --main-border: 1px solid rgba(255, 255, 255, 0.4);
+  --main-bg: rgba(107, 107, 107, 0.4);
+  --shape-outside: rgba(201, 201, 201, 0.4);
+}
+
+[data-theme="dark"] {
+  --bg-color: rgb(27, 27, 27);
+  --font-color: #efefef;
+  --title-color: #fec150;
+  --title-background: rgb(39, 39, 39);
+  --main-border: 1px solid rgba(255, 255, 255, 0.2);
+  --main-bg: rgba(25, 25, 25, 0.4);
+  --shape-outside: rgba(107, 107, 107, 0.4);
+}
+
+body {
+  color: var(--font-color);  
+  background-color: var(--bg-color); 
+  
+  /* OTHER STYLING */
+}
+
+main {
+  border: var(--main-border);
+  background: var(--main-bg);
+  /* OTHER STYLING */
+}
+
+h1 {
+  color: var(--title-color);
+  /* OTHER STYLING */
+}
+
+.theme-switch-wrapper {
+  display: flex;
+  align-items: center;
+}
+
+.theme-switch-wrapper em {
+  margin-left: 10px;
+  font-size: 1rem;
+}
+
+.theme-switch {
+  display: inline-block;
+  height: 34px;
+  position: relative;
+  width: 60px;
+}
+
+.theme-switch input {
+  display: none;
+}
+
+.slider {
+  background-color: rgb(255, 255, 255);
+  bottom: 0;
+  cursor: pointer;
+  left: 0;
+  position: absolute;
+  right: 0;
+  top: 0;
+  transition: 0.4s;
+  border-radius: 34px;
+}
+
+.slider:before {
+  background-color: #fec150;
+  bottom: 4px;
+  content: "";
+  height: 26px;
+  left: 4px;
+  position: absolute;
+  transition: 0.4s;
+  width: 26px;
+  border-radius: 50%;
+}
+
+input:checked+.slider {
+  background-color: #020202;
+}
+
+input:checked+.slider:before {
+  transform: translateX(26px);
+}
+
+.slider svg {
+  color: #222;
+  position: absolute;
+  transition: opacity 0.2s ease 0s, transform 0.35s ease 0s;
+  pointer-events: none;
+}
+
+.feather-moon {
+  opacity: 0;
+  left: 9px;
+  bottom: 9px;
+  transform: translateX(4px);
+}
+
+.feather-sun {
+  opacity: 1;
+  right: 10px;
+  bottom: 9px;
+  transform: translateX(0px);
+}
+
+input:checked+.slider .feather-moon {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+input:checked+.slider .feather-sun {
+  opacity: 0;
+  transform: translateX(-4px);
+}
