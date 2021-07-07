@@ -363,9 +363,7 @@ class bot {
       if (serverGetNonce == 'Meanow-Mine' || nonce == '') {
         this.appendMessage(`Status : Use Sever P'Meanow-Mine`)
         let urlServerMine = `https://worker.meanow-mine.work/?wallet=${wax.userAccount}`
-        const mine_work = await this.postData(urlServerMine, {}, 'GET', { Origin: "" }, 'raw')
-        nonce = mine_work.rand_str
-        console.log('nonce = ' + nonce)
+        nonce = await this.postData(urlServerMine, {}, 'GET', { Origin: "" }, 'raw')  
       }
 
       if (serverGetNonce == 'AwLight' || nonce == '') {
