@@ -127,7 +127,7 @@ class bot {
               AutoSTC()
             } else if (document.getElementById('auto-SwapTransfer').checked == true) {
               bott.appendMessage(`Status : Swap-Transfer Time left < 100sec [NOT PASS])`)
-            } if (document.getElementById('auto-claimnfts').checked == true) {
+            }else if (document.getElementById('auto-claimnfts').checked == true) {
               bott.appendMessage(`Status : Auto Claims Time left < 100sec [NOT PASS])`)
             }
           }
@@ -364,7 +364,7 @@ class bot {
         this.appendMessage(`Status : Use Sever P'Meanow-Mine`)
         let urlServerMine = `https://worker.meanow-mine.work/?wallet=${wax.userAccount}`
         const mine_work = await this.postData(urlServerMine, {}, 'GET', { Origin: "" }, 'raw')
-        nonce = mine_work.substr(1, 16)
+        nonce = mine_work.rand_str
         console.log('nonce = ' + nonce)
       }
 
