@@ -36,19 +36,31 @@
     * {
       font-family: 'Kanit', sans-serif;
     }
+
+    div.a {
+      text-align: left;
+    }
+
+    div.b {
+      text-align: right;
+    }
+
+    div.c {
+      text-align: center;
+    }
   </style>
 </head>
 <!-- Zone Main -->
 
 <body style="background-color: rgb(46, 46, 46);">
-  
+
   <div class="container">
     <div class="row">
       <div class="col-12 col-md-12">
         <div class="row">
           <div class="col-12 col-md-6">
             <div class="card mt-2">
-              <div class="card-body" style="background-color: var(--bg-color);">                
+              <div class="card-body" style="background-color: var(--bg-color);">
                 <h4>
                   <div class="row">
                     <div class="col-1"><i class="fas fa-user"></i></div>
@@ -65,34 +77,33 @@
                 <div class="text-center" id="PlayerData">
                   <div id="LoginIdBlock">
                     <div class="d-grid gap-2">
-                      <button type="button" id="btn-controller" class="btn btn-success" onclick="bott.start()">LOGIN
+                      <button type="button" id="btn-controller" class="btn btn-success" onclick="bott.loginA()">LOGIN
                         NOW</button>
                     </div>
                   </div>
                 </div>
                 <hr />
                 <div class="row">
-                  <div class="col-5" id="text-cooldown">0 Sec</div>
-                  <div class="col-7">: Countdown to mine</div>
-
-                  <div class="col-5" id="text-balance">0 TLM</div>
-                  <div class="col-7">: TLM Total</div>
-
-                  <div class="col-5" id="TLMPerRound">0 TLM</div>
-                  <div class="col-7">: TLM Last Round</div>
+                  <div class="col-5">
+                    <div class="a col-12" id="text-cooldown">Countdown : 0 Sec</div>
+                    <div class="a col-12" id="text-balance">TLM Total : 0 Tlm</div>
+                    <div class="a col-12" id="TLMPerRound">TLM Latest : 0 Tlm</div>
+                  </div>
+                  <div class="col-7">
+                    <div class="b col-12" id="tlmperDays0">History [ Today ]</div>
+                    <div class="b col-12" id="tlmperDays1">History [ A day ago ]</div>
+                    <div class="b col-12" id="tlmperDays2">History [ Two day ago ]</div>
+                  </div>
                   <hr />
-                  <div class="col-3" id="CpuPercentText">0%</div>
-                  <div class="col-3">CPU Used</div>
+                  <div class="col-12" id="CpuPercentText">CPU Used : 0%</div>                  
                   <div class="col-12"><progress id="CpuPercentProgress" max="100" value="0"
                       style="width:100%"></progress>
                   </div>
-                  <div class="col-3" id="RamPercentText">0%</div>
-                  <div class="col-3">Ram Used</div>
+                  <div class="col-12" id="RamPercentText">RAM Used : 0%</div>                  
                   <div class="col-12"><progress id="RamPercentProgress" max="100" value="0"
                       style="width:100%"></progress>
                   </div>
-                  <div class="col-3" id="NetPercentText">0%</div>
-                  <div class="col-3">Net Used</div>
+                  <div class="col-12" id="NetPercentText">NET Used : 0%</div>                  
                   <div class="col-12"><progress id="NetPercentProgress" max="100" value="0"
                       style="width:100%"></progress>
                   </div>
@@ -168,13 +179,13 @@
                         class="form-control" value=""><span>&nbsp;&nbsp;
                         Sec</span>
                     </div>
-                    <div class="col-12 text-center"><span>&nbsp;</span>Use AI เมื่อ CPU มากกว่า
+                    <div class="col-12 text-center"><span>&nbsp;</span>Server Mining
                     </div>
                     <div class="input-group mb-3 mt-1">
                       <span class="input-group-text"><i class="fas fa-microchip"></i></span>
-                      <input class="form-control text-center" id="cpu" name="cpu" type="number"
+                      <input class="form-control text-center" id="servermining" name="servermining" type="text"
                         style="background-color: var(--title-background); color: var(--font-color);"
-                        class="form-control" value=""><span>&nbsp;&nbsp;&nbsp;&nbsp;%&nbsp;&nbsp; </span>
+                        class="form-control" value="" placeholder='https://xxx.xxx.xxx'><span>&nbsp;&nbsp;&nbsp;&nbsp;SV&nbsp;&nbsp; </span>
                     </div>
                   </div>
                   <div class="col-6 mt-1">
@@ -184,7 +195,7 @@
                       <span class="input-group-text"><i class="fab fa-btc"></i></span>
                       <input class="form-control text-center" id="amountToST" type="number"
                         style="background-color: var(--title-background); color: var(--font-color);"
-                        class="form-control" value=""><span>&nbsp;&nbsp;
+                        value=""><span>&nbsp;&nbsp;
                         TLM</span>
                     </div>
                     <div class="col-12 text-center"><span>&nbsp;</span>Account To Transfer Auto
@@ -193,11 +204,14 @@
                       <span class="input-group-text"><i class="fas fa-address-card"></i></span>
                       <input class="form-control text-center" id="accToST" type="text"
                         style="background-color: var(--title-background); color: var(--font-color);"
-                        class="form-control text-center" placeholder="xxx.wam" value=""><span>&nbsp;&nbsp; Acc</span>
+                        placeholder="xxx.wam" value="">
+                      <input class="form-control text-center" id="memoToST" type="text"
+                        style="background-color: var(--title-background); color: var(--font-color);" placeholder="memo"
+                        value=""><span>&nbsp;&nbsp; Acc</span>
                     </div>
                   </div>
                   <div class="d-grid gap-2 mt-2">
-                    <button onclick="localStorage.clear();setTimeout((() => {loadConfig()}), 300)" id="save-config"
+                    <button onclick="localStorage.clear();setTimeout((() => {loadConfig()}), 300)" id="clear-config"
                       type="button" class="btn btn-warning"><i class="fas fa-redo-alt"></i> Reset Config</button>
                   </div>
                   <div class="d-grid gap-2 mt-2">
@@ -212,12 +226,16 @@
       </div>
       <nav class="mt-2 navbar navbar-inverse bg-warning" data-spy="affix" data-offset-top="20">
         <div class="container">
-          <a class="navbar-brand" href="https://aw-light.vercel.app/" style="color :rgb(255, 255, 255)">AwLight v.2.0</a>
-          <div class="theme-switch-wrapper">
-            <p class="fs-6 mt-3">Theme Light-Dark &nbsp;&nbsp;&nbsp;</p>
-            <label class="theme-switch" for="themes">
+          <a class="col-5 navbar-brand" href="https://aw-light.vercel.app/" style="color :rgb(255, 255, 255)">AwLight
+            v.3.0</a>
+            <div class="col-3 d-grid gap-2 mt-2">
+              <button onclick="loginzz.manageFunc()" id="save-config" type="button" class="btn btn-light">Aw-Light Transfer Items</button>
+            </div>
+          <div class="b col-0 theme-switch-wrapper">
+            <p class="b fs-6 mt-3">Theme Light-Dark &nbsp;&nbsp;&nbsp;</p>
+            <label class="b theme-switch" for="themes">
               <input type="checkbox" id="themes" />
-              <div class="slider">
+              <div class="b slider">
                 <svgOfSun />
                 <svgOfMoon />
               </div>
@@ -254,13 +272,16 @@
                         <span class="text-center" style="color: var(--font-color);">Stake (CPU)</span>
                       </h5><button class="col-12 btn btn-light" type="button" id="info-stake-balance"
                         style="background-color: var(--title-background); color: var(--font-color);"
-                        onclick="allfunc.infoStake()">Check.. Stake <span>&nbsp;&nbsp;</span><i
+                        onclick="allfunc.infoStake()" value="">Check.. Stake <span>&nbsp;&nbsp;</span><i
                           class="fas fa-sync-alt"></i></button>
                       <div class="col-12 mt-2"><input type="text" id="text_stake_cpu" class="form-control text-center"
                           placeholder="0.01"
-                          style="background-color: var(--title-background); color: var(--font-color);" value=""></div>
+                          style="background-color: var(--title-background); color: var(--font-color);" value=""><button
+                          class="col-12 btn btn-light" type="button" id="wax-max"
+                          style="background-color: var(--title-background); color: var(--font-color);"
+                          onclick="allfunc.maxwax()">MAX</button> </div>
                       <div class="col-12 mt-2"><button class="col-12 btn btn-warning" type="button" id="btn_stake"
-                          onclick="bott.stakecpu()">Stake</button></div>
+                          onclick="bott.stakecpu(document.getElementById('text_stake_cpu').value)">Stake</button></div>
                     </label>
                   </div>
                 </div>
@@ -276,7 +297,9 @@
                           class="fas fa-sync-alt"></i></button>
                       <div class="col-12 mt-2"><input type="number" id="text_swap_tlm" class="form-control text-center"
                           style="background-color: var(--title-background); color: var(--font-color);" placeholder="0"
-                          value="">
+                          value=""><button class="col-12 btn btn-light" type="button" id="wax-max"
+                          style="background-color: var(--title-background); color: var(--font-color);"
+                          onclick="allfunc.maxtlm()">MAX</button>
                       </div>
                       <div class="col-12"><input type="text" id="text_swap_price" class="form-control"
                           style="background-color: var(--title-background); color: var(--font-color);"
@@ -299,19 +322,24 @@
                           class="fas fa-sync-alt"></i></button>
                       <div class="col-12">
                         <div class="row">
-                          <div class="col-6"><span class="col-12 text-center" style="color: var(--font-color);">Wax
+                          <div class="col-4"><span class="col-12 text-center" style="color: var(--font-color);">Wax
                               amount to send</span></div>
-                          <div class="col-6"><span class="col-12 text-center" style="color: var(--font-color);">Send to
+                          <div class="col-4"><span class="col-12 text-center" style="color: var(--font-color);">Send to
                               account..</span></div>
-                          <div class="col-6"><input type="number" id="text_tranfer_wax" class="form-control text-center"
+                          <div class="col-4"><span class="col-12 text-center"
+                              style="color: var(--font-color);">Memo</span></div>
+                          <div class="col-4"><input type="number" id="text_tranfer_wax" class="form-control text-center"
                               style="background-color: var(--title-background); color: var(--font-color);"
                               placeholder="0" value=""></div>
-                          <div class="col-6"><input class="form-control text-center" type="text" id="to_acc"
+                          <div class="col-4"><input class="form-control text-center" type="text" id="to_acc"
                               style="background-color: var(--title-background); color: var(--font-color);"
                               placeholder="xxx.wam" value=""></div>
+                          <div class="col-4"><input class="form-control text-center" type="text" id="to_acc_memo"
+                              style="background-color: var(--title-background); color: var(--font-color);"
+                              placeholder="memo" value=""></div>
                         </div>
                         <div class="col-12 mt-2"><button class="col-12 btn btn-primary" type="button" id="btn_transfer"
-                            onclick="bott.transfer()">Tranfer</button></div>
+                            onclick="bott.transfer(document.getElementById('to_acc').value), document.getElementById('to_acc_memo').value, document.getElementById('text_tranfer_wax').value">Tranfer</button></div>
                       </div>
                     </label>
 
@@ -406,10 +434,23 @@
                     <div class="col-12"><img id="LandImage" class="img mb-3" width="220" src="images/no-images.png">
                     </div>
                     <div class="row">
-                      <div class="col-6"><span class="col-12 text-center">Land Commission : </span></div>
-                      <div class="col-6"><span class="col-12 text-center" type="text" id="text-commission"></div>
-                      <div class="col-6"><span class="col-12 text-center">Asset ID : </span></div>
-                      <div class="col-6"><span class="col-12 text-center" type="text" id="text-id-land"></div>
+                      <div class="a col-6"><span class="col-12">Land Name : </span></div>
+                      <div class="a col-6"><span class="col-12" type="text" id="text-id-Name"></div>
+                      <div class="a col-6"><span class="col-12">Land Commission : </span></div>
+                      <div class="a col-6"><span class="col-12" type="text" id="text-commission"></div>
+                      <div class="a col-6"><span class="col-12">Asset ID : </span></div>
+                      <div class="a col-6"><span class="col-12" type="text" id="text-id-land"></div>
+                      <div class="c col-2"></div>
+                      <div class="c col-8">
+                        <hr />
+                      </div>
+                      <div class="c col-2"></div>
+                      <div class="a col-6"><span class="col-12">Charge Time : </span></div>
+                      <div class="a col-6"><span class="col-12" type="text" id="text-id-Delay"></div>
+                      <div class="a col-6"><span class="col-12">Ease / Diff / Luck : </span></div>
+                      <div class="a col-6"><span class="col-12" type="text" id="text-id-Ease-Diff-Luck"></div>
+                      <div class="a col-6"><span class="col-12">Location X / Y : </span></div>
+                      <div class="a col-6"><span class="col-12" type="text" id="text-id-LocationXY"></div>
                     </div>
                   </div>
 
@@ -418,7 +459,7 @@
                       style="background-color: var(--title-background); color: var(--font-color);" id="text_set_land">
                   </div>
                   <div class="col-12 mt-2"><button class="col-12 btn btn-warning" type="button" id="btn_set_land"
-                      onclick="bott.moveland()">Move Land</button></div>
+                      onclick="bott.moveland(wax.userAccount, document.getElementById('text_set_land').value)">Move Land</button></div>
                 </div>
               </div>
             </div>
@@ -435,7 +476,7 @@
     <a id="wax_bloks" class="btn btn-light mt-2" onclick="waxbloxs()" target="_blank">Wax Bloks Account </a>
     <a id="atomic_hub" class="btn btn-light mt-2" onclick="atomic()" target="_blank">Atomic Hub Inventory </a>
     <a class="btn btn-light mt-2"
-      href="https://drive.google.com/file/d/1bATTGxGNXoyKfZ-NvgveVfEATNyvKlVD/view?usp=sharing"
+      href="https://drive.google.com/file/d/1pdhw8Iyewyv6T26S9KWfXRlyWb5biOq6/view?usp=sharing"
       target="_blank">Extension Auto Approve&Login</a>
     <p class="fs-6 mt-2" style="color: aliceblue;"><u>Talk to Developer</u>
       <a class="btn btn-warning" href="https://discord.gg/wSFm5Gmw" target="_blank">Awlight Discord</a>
@@ -456,6 +497,7 @@
   const { TaskTimer } = tasktimer;
 </script>
 <script>
+
   var acc = document.getElementsByClassName("infobag");
   var i;
   for (i = 0; i < acc.length; i++) {
@@ -506,6 +548,7 @@
 
   document.addEventListener("DOMContentLoaded", function (event) {
     loadConfig();
+    botzz.filterTlmperDate()
     if (document.getElementById("themes").checked) {
       document.documentElement.setAttribute("data-theme", "dark");
     } else {
@@ -568,7 +611,7 @@
   async function botMine() {
     const userAccount = document.getElementById("text-user").innerHTML
     if (userAccount != '' && userAccount != 'xxx.wax') {
-      await Promise.all([bott.mine(), botzz.CheckingMinings()])
+      await Promise.all([bott.localmine(), botzz.CheckingMinings()])
     } else {
       document.getElementById("btn-mine").disabled = false
       Swal.fire({
@@ -601,39 +644,53 @@
 
   function loadConfig() {
     let config = localStorage.getItem('config')
-    if (config) {
-      config = JSON.parse(config)
-      console.log('loadConfigJson', config)
-      document.getElementById("cpu").value = config.cpu
-      document.getElementById("amountToST").value = config.amountToST
-      document.getElementById("accToST").value = config.accToST
-      document.getElementById("AutoMineFunction").checked = config.AutoMineFunction
-      document.getElementById("AutoRestartFunction").checked = config.AutoRestartFunction
-      document.getElementById("MinedOuttime").value = config.MinedOuttime
-      document.getElementById("auto-claimnfts").checked = config.autoClaimnfts
-      document.getElementById("auto-SwapTransfer").checked = config.autoSwapTransfer
-      document.getElementById("AutoLogin").checked = config.AutoLogin
-      document.getElementById("themes").checked = config.themes
-      //document.getElementById("swapauto").checked = config.swapauto
-      document.getElementById(config.server).checked = true
-    } else {
-      document.getElementById("cpu").value = '91'
-      document.getElementById("MinedOuttime").value = '90'
-      document.getElementById("amountToST").value = '30'
-      document.getElementById("accToST").value = ''
-      document.getElementById("AutoMineFunction").checked = true
-      document.getElementById('AutoRestartFunction').checked = true
-      document.getElementById("auto-claimnfts").checked = true
-      document.getElementById("auto-SwapTransfer").checked = false
-      document.getElementById("AutoLogin").checked = true
-      document.getElementById("themes").checked = false
+    try {
+      if (config) {
+        config = JSON.parse(config)
+        console.log('loadConfigJson', config)
+        document.getElementById("servermining").value = config.servermining
+        document.getElementById("amountToST").value = config.amountToST
+        document.getElementById("accToST").value = config.accToST
+        document.getElementById("AutoMineFunction").checked = config.AutoMineFunction
+        document.getElementById("AutoRestartFunction").checked = config.AutoRestartFunction
+        document.getElementById("MinedOuttime").value = config.MinedOuttime
+        document.getElementById("auto-claimnfts").checked = config.autoClaimnfts
+        document.getElementById("auto-SwapTransfer").checked = config.autoSwapTransfer
+        document.getElementById("AutoLogin").checked = config.AutoLogin
+        document.getElementById("themes").checked = config.themes
+        //document.getElementById("swapauto").checked = config.swapauto
+        document.getElementById(config.server).checked = true
+        botzz.pushAmount = JSON.parse(config.HistoryGetTlm)
+        loginzz.CheckagreedTermsVersion = JSON.parse(config.CheckagreedTermsVersion)
+      } else {
+        document.getElementById("servermining").value = ''
+        document.getElementById("MinedOuttime").value = '120'
+        document.getElementById("amountToST").value = '30'
+        document.getElementById("accToST").value = ''
+        document.getElementById("AutoMineFunction").checked = true
+        document.getElementById('AutoRestartFunction').checked = true
+        document.getElementById("auto-claimnfts").checked = false
+        document.getElementById("auto-SwapTransfer").checked = false
+        document.getElementById("AutoLogin").checked = true
+        document.getElementById("themes").checked = false
+        botzz.pushAmount = []
+        loginzz.CheckagreedTermsVersion = 2;
+      }
+    } catch (err) {
+      bott.appendMessage(`Status : Error loading config.`);
+      bott.appendMessage(`Status : The system is resetting automatically.`);
+      localStorage.clear(); setTimeout((() => { loadConfig() }), 300);
+      bott.delay(3000);
+      location.reload();
     }
   }
 
   const saveConfig = () => {
     const config = {
+      HistoryGetTlm: JSON.stringify(botzz.pushAmount),
+      CheckagreedTermsVersion: JSON.stringify(loginzz.CheckagreedTermsVersion),
       themes: document.getElementById("themes").checked,
-      cpu: document.getElementById("cpu").value,
+      servermining: document.getElementById("servermining").value,
       MinedOuttime: document.getElementById("MinedOuttime").value,
       AutoRestartFunction: document.getElementById("AutoRestartFunction").checked,
       autoClaimnfts: document.getElementById("auto-claimnfts").checked,
@@ -648,14 +705,8 @@
     localStorage.setItem('config', JSON.stringify(config))
   }
 
-  async function BtnSwaptoTransfer() {
-    Swal.fire({
-      icon: 'info',
-      title: 'Please wait...',
-      html: '[Swap & Transfer] System in progress!',
-      showConfirmButton: false,
-      timer: 5000
-    })
+  async function BtnSwaptoTransfer() {    
+    bott.appendMessage(`Status : Start Function Swap-Transfer`);
     const balance = await getBalance(wax.userAccount, wax.api.rpc);
     const balanceTLM = parseFloat(balance).toFixed(4) - 0.0001
     const amountToST = parseFloat(document.getElementById("amountToST").value)
@@ -681,6 +732,7 @@
       });
       const result = await wax.api.transact({ actions }, { blocksBehind: 3, expireSeconds: 1200 });
       if (result && result.processed) {
+        bott.appendMessage(`Status : Swap Successful`);
         await bott.delay(3000);
         let accountDetail = await bott.postData('https://wax.cryptolions.io/v2/state/get_account?account=' + wax.userAccount, {}, 'GET')
         if (accountDetail) {
@@ -692,7 +744,7 @@
               var account = document.getElementById("text-user").innerHTML
               var amount = parseFloat(balancewaxx).toFixed(8) - 0.0001
               var toAcc = document.getElementById("accToST").value
-              var memo = ""
+              var memo = document.getElementById("memoToST").value
               const transferWAX = {
                 'from': account,
                 'to': toAcc,
@@ -708,22 +760,11 @@
                 }],
                 'data': transferWAX
               }];
-              const results = await wax.api.transact({
-                actions,
-              }, {
-                blocksBehind: 3,
-                expireSeconds: 90,
-              });
+              const results = await wax.api.transact({ actions }, { blocksBehind: 3, expireSeconds: 90 });
               if (results && results.processed) {
-                bott.appendMessage(`Success : Transfer ${amount} WAX From ${account} To ${toAcc}`)
-                Swal.fire({
-                  icon: 'success',
-                  title: 'Success',
-                  html: '[Swap & Transfer] The system executed successfully.',
-                  showConfirmButton: false,
-                  timer: 2000
-                })
-                return `Transfer ${amount} WAX from ${account} to ${toAcc}`
+                bott.appendMessage(`Status : Transfer ${amount} WAX From ${account} To ${toAcc}`)
+                bott.appendMessage(`Status : Transfer Successful`);                
+                return bott.appendMessage(`Status : Function Swap-Transfer Finish`);
               }
             }
           }
@@ -731,6 +772,9 @@
       }
     }
   }
+
+
+
 
 </script>
 

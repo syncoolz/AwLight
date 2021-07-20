@@ -5,21 +5,21 @@ var logDownloaded = false;
 const wax = new waxjs.WaxJS('https://wax.pink.gg'); //old url https://api.waxsweden.org
 
 async function server_login() {
-    try {
-      const userAccount = await wax.login();
-      unityInstance.SendMessage(
+  try {
+    const userAccount = await wax.login();
+    unityInstance.SendMessage(
       'Controller',
       'Server_Response_LoginData',
       userAccount
     );
-    } catch(error) {
-      unityInstance.SendMessage(
+  } catch (error) {
+    unityInstance.SendMessage(
       'ErrorHandler',
       'Server_Response_SetErrorData',
       readError(error.message)
     );
-    }
   }
+}
 
 async function onGameLoaded() {
   try {
@@ -71,12 +71,12 @@ async function server_agreeTerms(account, terms_id, terms_hash) {
 }
 
 async function server_agreedTermsVersion(account) {
-  try{
+  try {
     var terms_id = await agreedTermsVersion(federation_account, account, wax.api.rpc);
     unityInstance.SendMessage(
       'Controller',
       'Server_Response_AgreedTermsVersion',
-      JSON.stringify({terms_id:terms_id})
+      JSON.stringify({ terms_id: terms_id })
     );
   } catch (error) {
     unityInstance.SendMessage(
@@ -290,8 +290,8 @@ const getMineDelay = async function (account) {
     );
     const params = getBagMiningParams(bag);
     const land_params = getLandMiningParams(land);
-    params.delay *= land_params.delay / 10;    
-    params.difficulty += land_params.difficulty;  
+    params.delay *= land_params.delay / 10;
+    params.difficulty += land_params.difficulty;
     //bott.appendMessage(`params.delay = ${params.delay}`)  
     var minedelay = await getNextMineDelay(
       mining_account,
@@ -300,7 +300,7 @@ const getMineDelay = async function (account) {
       wax.api.rpc
     );
     //bott.appendMessage(`getMineDelay return = ${minedelay}`) 
-    return minedelay;    
+    return minedelay;
   } catch (error) {
     return error;
   }
@@ -327,8 +327,10 @@ const getBagDifficulty = async function (account) {
   try {
     const bag = await getBag(mining_account, account, wax.api.rpc, aa_api);
     const params = getBagMiningParams(bag);
+    bott.BagDifficulty = params.difficulty
     return params.difficulty;
   } catch (error) {
+    await bott.errorcatch(error)
     return error;
   }
 };
@@ -343,29 +345,43 @@ const getLandDifficulty = async function (account) {
       aa_api
     );
     const params = getLandMiningParams(land);
+    bott.LandDifficulty = params.difficulty
     return params.difficulty;
   } catch (error) {
+    await bott.errorcatch(error)
     return error;
   }
 };
 
 const background_mine = async (account) => {
   return new Promise(async (resolve, reject) => {
-    const bagDifficulty = await getBagDifficulty(account);
-    const landDifficulty = await getLandDifficulty(account);
-    const difficulty = bagDifficulty + landDifficulty;
-    console.log('difficulty', difficulty);
+    if (typeof bott.BagDifficulty !== "number" && typeof bott.LandDifficulty !== "number") {
+      const bagDifficulty = await getBagDifficulty(account);
+      const landDifficulty = await getLandDifficulty(account);
+      const difficulty = bagDifficulty + landDifficulty;
+      console.log('difficulty', difficulty);
+      console.log('start doWork = ' + Date.now());
+      const last_mine_tx = await lastMineTx(mining_account, account, wax.api.rpc);
 
-    console.log('start doWork = ' + Date.now());
-    const last_mine_tx = await lastMineTx(mining_account, account, wax.api.rpc);
+      doWorkWorker({ mining_account, account, difficulty, last_mine_tx }).then(
+        (mine_work) => {
+          console.log('end doWork = ' + Date.now());
+          resolve(mine_work);
+        }
+      );
+    } else {
+      const difficulty = bott.BagDifficulty + bott.LandDifficulty
+      console.log('start doWork = ' + Date.now());
+      const last_mine_tx = await lastMineTx(mining_account, account, wax.api.rpc);
 
-    doWorkWorker({ mining_account, account, difficulty, last_mine_tx }).then(
-      (mine_work) => {
-        console.log('end doWork = ' + Date.now());
-        resolve(mine_work);
-      }
-    );
-  });  
+      doWorkWorker({ mining_account, account, difficulty, last_mine_tx }).then(
+        (mine_work) => {
+          console.log('end doWork = ' + Date.now());
+          resolve(mine_work);
+        }
+      );
+    }
+  });
 };
 
 async function server_mine(account) {
@@ -428,45 +444,46 @@ async function server_claim(data) {
         if (result && result.processed) {
           let mined_amount = 0;
           result.processed.action_traces[0].inline_traces.forEach((t) => {
-/*            if (t.act.data.quantity) {
-              const mine_amount = t.act.data.quantity;
-              console.log(`${mine_work.account} Mined ${mine_amount}`);
-              if (amounts.has(t.act.data.to)) {
-                var obStr = amounts.get(t.act.data.to);
-                obStr = obStr.substring(0, obStr.length - 4);
-
-                var nbStr = t.act.data.quantity;
-                nbStr = nbStr.substring(0, nbStr.length - 4);
-
-                var balance = (parseFloat(obStr) + parseFloat(nbStr)).toFixed(
-                  4
-                );
-
-                amounts.set(t.act.data.to, balance.toString() + ' TLM');
-              } else {
-                amounts.set(t.act.data.to, t.act.data.quantity);
-              }
+            /*            if (t.act.data.quantity) {
+                          const mine_amount = t.act.data.quantity;
+                          console.log(`${mine_work.account} Mined ${mine_amount}`);
+                          if (amounts.has(t.act.data.to)) {
+                            var obStr = amounts.get(t.act.data.to);
+                            obStr = obStr.substring(0, obStr.length - 4);
+            
+                            var nbStr = t.act.data.quantity;
+                            nbStr = nbStr.substring(0, nbStr.length - 4);
+            
+                            var balance = (parseFloat(obStr) + parseFloat(nbStr)).toFixed(
+                              4
+                            );
+            
+                            amounts.set(t.act.data.to, balance.toString() + ' TLM');
+                          } else {
+                            amounts.set(t.act.data.to, t.act.data.quantity);
+                          }
+                        }
+            */
+            if (t.act.account === 'alien.worlds' && t.act.name === 'transfer' && t.act.data.to === mine_work.account) {
+              const [amount_str] = t.act.data.quantity.split(' ');
+              mined_amount += parseFloat(amount_str);
             }
-*/
-          if (t.act.account === 'alien.worlds' && t.act.name === 'transfer' && t.act.data.to === mine_work.account){
-            const [amount_str] = t.act.data.quantity.split(' ');
-            mined_amount += parseFloat(amount_str);        
-          }
-        });
+          });
 
           unityInstance.SendMessage(
             'Controller',
             'Server_Response_Claim',
-//            amounts.get(mine_work.account)
+            //            amounts.get(mine_work.account)
             `${mined_amount.toFixed(4)} TLM`
           );
         }
       }).catch((err) => {
         unityInstance.SendMessage(
-            'ErrorHandler',
-            'Server_Response_SetErrorData',
-            err.message
-        );});
+          'ErrorHandler',
+          'Server_Response_SetErrorData',
+          err.message
+        );
+      });
   } catch (error) {
     unityInstance.SendMessage(
       'ErrorHandler',
@@ -476,7 +493,7 @@ async function server_claim(data) {
   }
 }
 
-async function server_claim2 (mining_account1, account, account_permission, mine_data1, hyperion_endpoints) {
+async function server_claim2(mining_account1, account, account_permission, mine_data1, hyperion_endpoints) {
   console.log(mining_account1);
   console.log(account);
   console.log(account_permission);
@@ -489,12 +506,12 @@ async function server_claim2 (mining_account1, account, account_permission, mine
       nonce: mine_work.rand_str,
     };
     console.log("Claiming Now");
-    const claimData = await claim(mining_account,account, 'active', mine_data, hyperion_endpoints, wax.api);
+    const claimData = await claim(mining_account, account, 'active', mine_data, hyperion_endpoints, wax.api);
     console.log("Claim Data" + claimData);
     unityInstance.SendMessage(
       'Controller',
       'Server_Response_Claim',
-       claimData.toString()
+      claimData.toString()
     );
   } catch (error) {
     unityInstance.SendMessage(
@@ -505,13 +522,13 @@ async function server_claim2 (mining_account1, account, account_permission, mine
   }
 }
 
-async function server_getBounty (transaction_id, account, hyperion_endpoints) {
+async function server_getBounty(transaction_id, account, hyperion_endpoints) {
   try {
-    const claimBounty = await getBountyFromTx(transaction_id,account, hyperion_endpoints);
+    const claimBounty = await getBountyFromTx(transaction_id, account, hyperion_endpoints);
     unityInstance.SendMessage(
       'Controller',
       'Server_Response_GetBounty',
-       claimBounty.toString()
+      claimBounty.toString()
     );
   } catch (error) {
     unityInstance.SendMessage(
@@ -679,8 +696,8 @@ async function server_getAssets(account, schema) {
 
 async function server_setLandCommission(account, land_id, commission) {
   try {
-    await setLandCommission(federation_account,account,land_id,commission,wax.api)
-    unityInstance.SendMessage('Controller', 'Server_Response_SetLandCommission', JSON.stringify({land_id,commission}));
+    await setLandCommission(federation_account, account, land_id, commission, wax.api)
+    unityInstance.SendMessage('Controller', 'Server_Response_SetLandCommission', JSON.stringify({ land_id, commission }));
   } catch (error) {
     unityInstance.SendMessage(
       'ErrorHandler',
@@ -754,6 +771,6 @@ async function add_event(Event) {
 //     a.dispatchEvent(e);
 //   };
 
-  function openURL(url) {
-    window.open(url)
-  }
+function openURL(url) {
+  window.open(url)
+}

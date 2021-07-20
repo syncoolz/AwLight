@@ -1,5 +1,48 @@
-
 class botz {
+    constructor() {
+        this.countcheckstop = false;
+        this.subtractDays = 0;
+        this.pushAmount = [];
+        this.selectpush = [];
+        this.cpuAvailable = 0;
+
+    }
+
+    async getTlmperDate(amountTlm) {
+        let getAmount = {
+            day: moment().format('DD-MM'),
+            tlm: parseFloat(amountTlm).toFixed(4),
+        };
+        this.pushAmount.push(getAmount);
+        await this.filterTlmperDate();
+    }
+    async filterTlmperDate() {
+        let filterAmount = [];
+        const date3 = moment().subtract(3, "days").format("DD-MM");
+        filterAmount = this.pushAmount.filter((result) => {return result.day !== date3; });
+        //console.log(filterAmount)
+        this.pushAmount = filterAmount;        
+        for (let i = 0; i < 3; i++) {
+            let ans = 0;
+            const datenow = moment().subtract(i, "days").format("DD-MM");
+            filterAmount = this.pushAmount.filter((result) => {return result.day === datenow; });
+            if (filterAmount.length) {
+                filterAmount.forEach((filterAmount) => {
+                    ans += parseFloat(filterAmount.tlm)
+                })
+                console.log('Tlm All per Days = ' + ans);
+                if (i == 0) {
+                    document.getElementById("tlmperDays" + i).innerHTML = `TODAY : [ ${parseFloat(ans).toFixed(3)} TLM (${filterAmount.length}) ]`
+                } else {
+                    document.getElementById("tlmperDays" + i).innerHTML = `${datenow} : [ ${parseFloat(ans).toFixed(3)} TLM (${filterAmount.length}) ]`
+                }
+            } else {
+                console.log('No Data')
+            }
+        }
+        saveConfig()
+    }
+
     async MonitorRealtime() {
         const timerMonitorRealtime = new TaskTimer(1000);
         timerMonitorRealtime.add([
@@ -18,28 +61,21 @@ class botz {
                         document.getElementById("CpuPercentProgress").value = CPU_Percent_raw.toFixed(0);
                         document.getElementById("RamPercentProgress").value = RAM_Percent_raw.toFixed(0);
                         document.getElementById("NetPercentProgress").value = NET_Percent_raw.toFixed(0);
-                        document.getElementById("CpuPercentText").innerHTML = CPU_Percent_raw.toFixed(0) + " %";
-                        document.getElementById("RamPercentText").innerHTML = RAM_Percent_raw.toFixed(0) + " %";
-                        document.getElementById("NetPercentText").innerHTML = NET_Percent_raw.toFixed(0) + " %";
+                        document.getElementById("CpuPercentText").innerHTML = `CPU Used : ${CPU_Percent_raw.toFixed(0)}% ( ${Number((account_data.cpu_limit.used / 1000).toFixed(2))} ms / ${Number((account_data.cpu_limit.max / 1000).toFixed(2))} ms ) - (Available : ${Number((account_data.cpu_limit.available / 1000).toFixed(2))} ms )`
+                        document.getElementById("RamPercentText").innerHTML = `CPU Used : ${RAM_Percent_raw.toFixed(0)}%`
+                        document.getElementById("NetPercentText").innerHTML = `CPU Used : ${NET_Percent_raw.toFixed(0)}%`
+                        botzz.cpuAvailable = Number(account_data.cpu_limit.available);
                     }
                     countMonitorRealtime()
                 }
-            },/* {
-                id: 'AI_DetectError',       // unique ID of the task                
-                tickInterval: 300,   // run every 10 ticks (10 x interval = 10000 ms)
-                totalRuns: 0,       // run 2 times only. (set to 0 for unlimited times)
-                callback(task) {
-                    console.log(`${task.id} START.`);
-                    if (document.getElementById('AutoRestartFunction').checked == true) {
-                    loginzz.detectError()
-                    }
-                }
-            }*/
+            }
         ]);
         timerMonitorRealtime.start()
     }
+
     async CheckingMinings() {
         const waitStatus = "Mining";
+        botzz.countcheckstop = false;
         if (document.getElementById('AutoRestartFunction').checked == true) {
             const timeleft = document.getElementById('MinedOuttime').value
             const countCheckMining = parseFloat(timeleft)
@@ -58,11 +94,10 @@ class botz {
                         id: 'MiningCheck',       // unique ID of the task
                         //tickDelay: 1,       // 1 tick delay before first run
                         tickInterval: countCheckMining,   // run every 10 ticks (10 x interval = 10000 ms)
-                        totalRuns: countCheckMining,       // run 2 times only. (set to 0 for unlimited times)
+                        totalRuns: 1,       // run 2 times only. (set to 0 for unlimited times)
                         callback(task) {
                             console.log(`${task.id} task has run ${task.currentRuns} times.`);
-                            if (waitStatus == document.getElementById("text-cooldown").innerHTML) {
-                                timerMiningCheck.stop()
+                            if (botzz.countcheckstop == false) {
                                 location.reload();
                             } else {
                                 timerMiningCheck.stop()
@@ -76,9 +111,8 @@ class botz {
                         callback(task) {
                             //console.log(`${task.id} task has run ${count} times.`);
                             document.getElementsByTagName('title')[0].text = `Mining.. ${Math.ceil(task.totalRuns - task.currentRuns)} Sec`
-                            if (waitStatus != document.getElementById("text-cooldown").innerHTML) {
+                            if (botzz.countcheckstop == true) {
                                 timerMiningCheck.stop()
-                                //loginzz.detectError()
                             }
                         }
                     }
@@ -87,4 +121,5 @@ class botz {
             }
         }
     }
+    
 }
