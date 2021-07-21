@@ -62,8 +62,8 @@ class botz {
                         document.getElementById("RamPercentProgress").value = RAM_Percent_raw.toFixed(0);
                         document.getElementById("NetPercentProgress").value = NET_Percent_raw.toFixed(0);
                         document.getElementById("CpuPercentText").innerHTML = `CPU Used : ${CPU_Percent_raw.toFixed(0)}% ( ${Number((account_data.cpu_limit.used / 1000).toFixed(2))} ms / ${Number((account_data.cpu_limit.max / 1000).toFixed(2))} ms ) - (Available : ${Number((account_data.cpu_limit.available / 1000).toFixed(2))} ms )`
-                        document.getElementById("RamPercentText").innerHTML = `CPU Used : ${RAM_Percent_raw.toFixed(0)}%`
-                        document.getElementById("NetPercentText").innerHTML = `CPU Used : ${NET_Percent_raw.toFixed(0)}%`
+                        document.getElementById("RamPercentText").innerHTML = `RAM Used : ${RAM_Percent_raw.toFixed(0)}%`
+                        document.getElementById("NetPercentText").innerHTML = `NET Used : ${NET_Percent_raw.toFixed(0)}%`
                         botzz.cpuAvailable = Number(account_data.cpu_limit.available);
                     }
                     countMonitorRealtime()
