@@ -291,7 +291,7 @@ class bot {
         var TLMofeachtimeTrue = parseFloat(balanceAfter) - parseFloat(this.balanceBefore)
         if (TLMofeachtimeTrue > 0) {
           this.appendMessage(`Mine Success GET: ${parseFloat(TLMofeachtimeTrue).toFixed(4)} TLM`, '2');
-          document.getElementById("TLMPerRound").innerHTML = `TLM Total : ${parseFloat(TLMofeachtimeTrue).toFixed(4)} Tlm`;
+          document.getElementById("TLMPerRound").innerHTML = `TLM Last : ${parseFloat(TLMofeachtimeTrue).toFixed(4)} Tlm`;
           document.getElementById("text-balance").innerHTML = `TLM Total : ${parseFloat(afterMindedBalance).toFixed(4)} Tlm`;
           botzz.countcheckstop = true;
           await botzz.getTlmperDate(TLMofeachtimeTrue)
@@ -405,7 +405,7 @@ class bot {
         var TLMofeachtimeTrue = parseFloat(balanceAfter) - parseFloat(this.balanceBefore)
         if (TLMofeachtimeTrue > 0) {
           this.appendMessage(`Mine Success GET: ${parseFloat(TLMofeachtimeTrue).toFixed(4)} TLM`, '2');
-          document.getElementById("TLMPerRound").innerHTML = `TLM Total : ${parseFloat(TLMofeachtimeTrue).toFixed(4)} Tlm`;
+          document.getElementById("TLMPerRound").innerHTML = `TLM Last : ${parseFloat(TLMofeachtimeTrue).toFixed(4)} Tlm`;
           document.getElementById("text-balance").innerHTML = `TLM Total : ${parseFloat(afterMindedBalance).toFixed(4)} Tlm`;
           botzz.countcheckstop = true;
           await botzz.getTlmperDate(TLMofeachtimeTrue);
