@@ -806,7 +806,7 @@ class bot {
         if (botzz.cpuAvailable > limitCPUpassed) {
           bott.appendMessage(`Status : CPU ${botzz.cpuAvailablems}ms remaining [PASS]`)
           const BalanceTLM = parseFloat(document.getElementById("text-balance").innerHTML).toFixed(4)
-          const amountToST = parseFloat(document.getElementById("amountToST").innerHTML)
+          const amountToST = parseFloat(document.getElementById("amountToST").value)
           if (BalanceTLM > amountToST) {
             bott.appendMessage(`Status : You have ${BalanceTLM} TLM [PASS]`)
             BtnSwaptoTransfer();
