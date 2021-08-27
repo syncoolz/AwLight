@@ -804,7 +804,7 @@ class bot {
       if (this.counttimetoST == 5) {
         this.counttimetoST = 0;
         if (botzz.cpuAvailable > limitCPUpassed) {
-          bott.appendMessage(`Status : CPU ${botzz.cpuAvailablems}ms remaining [PASS]`)
+          bott.appendMessage(`Status : CPU ${botzz.cpuAvailable}ms remaining [PASS]`)
           const BalanceTLM = parseFloat(document.getElementById("text-balance").innerHTML).toFixed(4)
           const amountToST = parseFloat(document.getElementById("amountToST").value)
           if (BalanceTLM > amountToST) {
@@ -814,7 +814,7 @@ class bot {
             bott.appendMessage(`Status : You have ${BalanceTLM} TLM [NOT PASS]`)
           }
         } else {
-          bott.appendMessage(`Status Error : CPU ${botzz.cpuAvailablems}ms remaining [NOT PASS]`)
+          bott.appendMessage(`Status Error : CPU ${botzz.cpuAvailable}ms remaining [NOT PASS]`)
           bott.appendMessage(`Status : Swap-Transfer(Auto) canceled. Wait for the next time.`)
         }
       }
@@ -824,10 +824,10 @@ class bot {
       if (this.counttimetoST == 5) {
         this.counttimetoST = 0;
         if (botzz.cpuAvailable > limitCPUpassed) {
-          bott.appendMessage(`Status : CPU ${botzz.cpuAvailablems}ms remaining [PASS]`)
+          bott.appendMessage(`Status : CPU ${botzz.cpuAvailable}ms remaining [PASS]`)
           await bott.getClaimnfts();
         } else {
-          bott.appendMessage(`Status Error : CPU ${botzz.cpuAvailablems}ms remaining [NOT PASS]`)
+          bott.appendMessage(`Status Error : CPU ${botzz.cpuAvailable}ms remaining [NOT PASS]`)
           bott.appendMessage(`Status : Claims(Auto) canceled. Wait for the next time.`)
         }
       }
