@@ -678,7 +678,7 @@ async function server_subscribe(account) {
 
 async function server_getAssets(account, schema) {
   try {
-    var assets = await getAssets(account, atomic_endpoint, collection, schema);
+    var assets = await getAssets(account, atomic_endpoint[getRandom(0,atomic_endpoint.length)], collection, schema);    
     var data = { schema: schema, assets: assets };
     unityInstance.SendMessage(
       'Controller',

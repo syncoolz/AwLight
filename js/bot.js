@@ -16,6 +16,10 @@ class bot {
     this.difficulty = '';
     this.BagDifficulty = '';
     this.LandDifficulty = '';
+    this.nameworlds = '';
+    this.averageend = 0;
+    this.useAverage = false;
+    this.averageComplete = false;
   }
 
 
@@ -72,6 +76,7 @@ class bot {
   }
 
   async timerForMine(TimeWait) {
+    botzz.countcheckstop = true;
     // Timer with 1000ms (1 second) base interval resolution.
     const timer = new TaskTimer(1000);
     // interval can be updated anytime by setting the `timer.interval` property.
@@ -88,8 +93,8 @@ class bot {
           // code to be executed on each run
           timer.reset();
           console.log(`System ${task.id}`);
-          document.getElementById("text-cooldown").innerHTML = "Countdown : CheckCPU"
-          document.getElementsByTagName('title')[0].text = `${wax.userAccount} - CheckCPU`
+          document.getElementById("text-cooldown").innerHTML = "Countdown : CheckCPU.."
+          document.getElementsByTagName('title')[0].text = `${wax.userAccount} - CheckCPU..`
           document.getElementById("btn-mine").disabled = false
           async function CPUchecking() {
             await bott.CPUchecked();
@@ -149,17 +154,18 @@ class bot {
       if (this.counttimetomine == 60) {
         this.counttimetomine = 0;
         this.appendMessage(`Status : Mining..`);
-        await Promise.all([bott.mine(), botzz.CheckingMinings()]);
+        await Promise.all([bott.mine(), botzz.countdownReload()]);
       } else {
         this.TimeWait = 10000;
         await bott.timerForMine(this.TimeWait)
       }
     } else {
-      this.appendMessage("Status : CPU Check = CPU " + botzz.cpuAvailable + "ms remaining [Passed Go Mine]");
+      this.appendMessage("Status : CPU Check = CPU " + botzz.cpuAvailable + "ms remaining [Passed Go Transection]");
       this.counttimetomine = 0;
-      await Promise.all([bott.mine(), botzz.CheckingMinings()]);
+      await Promise.all([bott.mine(), botzz.countdownReload()]);
     }
   }
+
 
   myRandom(min, max) {
     const N = max - min + 1;
@@ -199,9 +205,11 @@ class bot {
     try {
       loginzz.loginauto = false;
       if (loginzz.CheckagreedTermsVersion == 1) {
+        await botzz.countdownReload();
         const userAccount = await wax.login();
         document.getElementById("btn-controller").hidden = true;
         if (userAccount) {
+          botzz.countcheckstop = true;
           this.appendMessage(`Status : Login WAX Success.`);
           this.appendMessage(`Status : Welcome ${userAccount}`);
           await botzz.MonitorRealtime();
@@ -257,6 +265,21 @@ class bot {
     }
   }
 
+  async checkpool(worlds) {    
+    const gg = await bott.postData('HTTPS://CHAIN.WAX.IO/v1/chain/get_table_rows', {
+      "json": true,
+      "code": "m.federation",
+      "scope": worlds,
+      "table": "state3",
+      "index_position": 1,
+      "limit": 101,
+      "reverse": ![],
+    }, 'POST')
+    //console.log(parseFloat(gg.rows[0].mine_bucket).toFixed(4))
+    const result = parseFloat(gg.rows[0].mine_bucket).toFixed(4)
+    return result
+  }
+
   async mine() {
     this.counttimestop = true;
     document.getElementById("btn-mine").disabled = true;
@@ -280,25 +303,60 @@ class bot {
       },
     ];
     try {
-      await this.delay(3000);
-      const result = await wax.api.transact({ actions }, { blocksBehind: 3, expireSeconds: 90 });
-      if (result && result.processed) {
-        await this.delay(5000);
-        await this.mineDelay()
-        const afterMindedBalance = await getBalance(wax.userAccount, wax.api.rpc);
-        const balanceAfter = parseFloat(afterMindedBalance)
-        this.appendMessage(`Status : Last Balance = ${parseFloat(balanceAfter).toFixed(4)}`)
-        var TLMofeachtimeTrue = parseFloat(balanceAfter) - parseFloat(this.balanceBefore)
-        if (TLMofeachtimeTrue > 0) {
-          this.appendMessage(`Mine Success GET: ${parseFloat(TLMofeachtimeTrue).toFixed(4)} TLM`, '2');
-          document.getElementById("TLMPerRound").innerHTML = `TLM Last : ${parseFloat(TLMofeachtimeTrue).toFixed(4)} Tlm`;
-          document.getElementById("text-balance").innerHTML = `TLM Total : ${parseFloat(afterMindedBalance).toFixed(4)} Tlm`;
-          botzz.countcheckstop = true;
-          await botzz.getTlmperDate(TLMofeachtimeTrue)
-          TLMofeachtimeTrue = 0;
+      var checkpools = 0.0000
+      var count = 0
+      var countpush = 0
+      var average = 0 
+      var i = 0
+      do {
+        await this.delay(1500)
+        if (this.nameworlds !== '') {
+          checkpools = await this.checkpool(this.nameworlds)
+        } else {
+          await allfunc.SetLandInfo()
+          checkpools = await this.checkpool(this.nameworlds)
         }
-        this.balanceBefore = afterMindedBalance
-        document.getElementById("btn-mine").disabled = false
+        if(checkpools > 0.1){
+          countpush++
+          i++
+          this.appendMessage(`Status : Finding Rate Pools [Count ${i}] = ${parseFloat(checkpools).toFixed(4)}`)          
+          average += checkpools*10000
+          console.log(average)
+          if (countpush >= 10) {
+            this.averageend = ((average/10000)/(countpush+2)).toFixed(4)
+            this.appendMessage(`Status : Rate Pools Average = ${parseFloat(this.averageend).toFixed(4)}`)
+            console.log(this.averageend)  
+            this.useAverage = true      
+          }            
+        }
+        if (this.averageend < checkpools && this.useAverage == true){          
+          count++
+          this.appendMessage(`Status : Pools Average = ${parseFloat(this.averageend).toFixed(4)} < ${parseFloat(checkpools).toFixed(4)} [GO MINE]`)          
+        } else if (this.useAverage == true) {
+          count = 0
+          this.appendMessage(`Status : Pools Average = ${parseFloat(this.averageend).toFixed(4)} < ${parseFloat(checkpools).toFixed(4)} [NOT PASS]`)
+          await this.delay(1500)
+        }         
+      } while (count < 1) {                  
+        const result = await wax.api.transact({ actions }, { blocksBehind: 3, expireSeconds: 90 });
+        if (result && result.processed) {
+          await this.delay(5000);
+          await this.mineDelay()
+          const afterMindedBalance = await getBalance(wax.userAccount, wax.api.rpc);
+          const balanceAfter = parseFloat(afterMindedBalance)
+          this.appendMessage(`Status : Last Balance = ${parseFloat(balanceAfter).toFixed(4)}`)
+          var TLMofeachtimeTrue = parseFloat(balanceAfter) - parseFloat(this.balanceBefore)
+          if (TLMofeachtimeTrue > 0) {
+            this.appendMessage(`Mine Success GET: ${parseFloat(TLMofeachtimeTrue).toFixed(4)} TLM`, '2');
+            document.getElementById("TLMPerRound").innerHTML = `TLM Last : ${parseFloat(TLMofeachtimeTrue).toFixed(4)} Tlm`;
+            document.getElementById("text-balance").innerHTML = `TLM Total : ${parseFloat(afterMindedBalance).toFixed(4)} Tlm`;
+            botzz.countcheckstop = true;
+            await botzz.getTlmperDate(TLMofeachtimeTrue)
+            TLMofeachtimeTrue = 0;
+          }
+          this.balanceBefore = afterMindedBalance
+          document.getElementById("btn-mine").disabled = false
+        }
       }
     } catch (err) {
       this.appendMessage(`Error in function mine`)
@@ -348,9 +406,10 @@ class bot {
         console.log('Difficulty = ' + this.difficulty)
         const last_mine_tx = await lastMineTx(mining_account, wax.userAccount, wax.api.rpc);
         console.log('last_mine_tx = ' + last_mine_tx);
-        if (document.getElementById('servermining').value != '') {
-          this.appendMessage(`Status : Use Awlight SeverFree Mine`);
-          var server = document.getElementById('servermining').value
+        var server = ''
+        if (document.getElementById('servermining').value !== '') {
+          this.appendMessage(`Status : Use Sever private Mine`);
+          server = document.getElementById('servermining').value
           urlServerMine = server
           console.log(urlServerMine)
           this.appendMessage(`Status : Use [${urlServerMine}]`)
@@ -360,8 +419,17 @@ class bot {
           } else {
             nonce = sv_mine_work
           }
-        }else{
-          return await this.localnonce()
+        } else {
+          this.appendMessage(`Status : Use Awlight SeverFree Mine`);
+          server = ['https://svmine-node-2-u5o2g.ondigitalocean.app', 'https://svmine-node-vjan5.ondigitalocean.app'];
+          urlServerMine = server[Math.floor(Math.random() * server.length)];
+          this.appendMessage(`Status : Use [${urlServerMine}]`)
+          sv_mine_work = await this.postData(urlServerMine + `/mine?waxaccount=${wax.userAccount}&difficulty=${this.difficulty}&lastMineTx=${last_mine_tx}`, {}, 'GET', { Origin: "" }, 'raw')
+          if (sv_mine_work == '') {
+            return await this.localnonce()
+          } else {
+            nonce = sv_mine_work
+          }
         }
       }
       this.appendMessage(`Status : Nonce Successful (${nonce})`)
@@ -395,24 +463,60 @@ class bot {
       },
     ];
     try {
-      const result = await wax.api.transact({ actions }, { blocksBehind: 3, expireSeconds: 90 });
-      if (result && result.processed) {
-        await this.delay(5000);
-        await this.mineDelay()
-        const afterMindedBalance = await getBalance(wax.userAccount, wax.api.rpc);
-        const balanceAfter = parseFloat(afterMindedBalance)
-        this.appendMessage(`Status : Last Balance = ${parseFloat(balanceAfter).toFixed(4)} TLM`)
-        var TLMofeachtimeTrue = parseFloat(balanceAfter) - parseFloat(this.balanceBefore)
-        if (TLMofeachtimeTrue > 0) {
-          this.appendMessage(`Mine Success GET: ${parseFloat(TLMofeachtimeTrue).toFixed(4)} TLM`, '2');
-          document.getElementById("TLMPerRound").innerHTML = `TLM Last : ${parseFloat(TLMofeachtimeTrue).toFixed(4)} Tlm`;
-          document.getElementById("text-balance").innerHTML = `TLM Total : ${parseFloat(afterMindedBalance).toFixed(4)} Tlm`;
-          botzz.countcheckstop = true;
-          await botzz.getTlmperDate(TLMofeachtimeTrue);
-          TLMofeachtimeTrue = 0;
+      var checkpools = 0.0000
+      var count = 0
+      var countpush = 0
+      var average = 0 
+      var i = 0
+      do {
+        await this.delay(1500)
+        if (this.nameworlds !== '') {
+          checkpools = await this.checkpool(this.nameworlds)
+        } else {
+          await allfunc.SetLandInfo()
+          checkpools = await this.checkpool(this.nameworlds)
         }
-        this.balanceBefore = afterMindedBalance
-        document.getElementById("btn-mine").disabled = false
+        if(checkpools > 0.1){
+          countpush++
+          i++
+          this.appendMessage(`Status : Finding Rate Pools [Count ${i}] = ${parseFloat(checkpools).toFixed(4)}`)          
+          average += checkpools*10000
+          console.log(average)
+          if (countpush >= 10) {
+            this.averageend = ((average/10000)/(countpush+2)).toFixed(4)
+            this.appendMessage(`Status : Rate Pools Average = ${parseFloat(this.averageend).toFixed(4)}`)
+            console.log(this.averageend)  
+            this.useAverage = true      
+          }            
+        }
+        if (this.averageend < checkpools && this.useAverage == true){          
+          count++
+          this.appendMessage(`Status : Pools Average = ${parseFloat(this.averageend).toFixed(4)} < ${parseFloat(checkpools).toFixed(4)} [GO MINE]`)
+        } else if (this.useAverage == true) {
+          count = 0
+          this.appendMessage(`Status : Pools Average = ${parseFloat(this.averageend).toFixed(4)} < ${parseFloat(checkpools).toFixed(4)} [NOT PASS]`)
+          await this.delay(1500)
+        }   
+      } while (count < 1) {                      
+        const result = await wax.api.transact({ actions }, { blocksBehind: 3, expireSeconds: 90 });
+        if (result && result.processed) {
+          await this.delay(5000);
+          await this.mineDelay()
+          const afterMindedBalance = await getBalance(wax.userAccount, wax.api.rpc);
+          const balanceAfter = parseFloat(afterMindedBalance)
+          this.appendMessage(`Status : Last Balance = ${parseFloat(balanceAfter).toFixed(4)}`)
+          var TLMofeachtimeTrue = parseFloat(balanceAfter) - parseFloat(this.balanceBefore)
+          if (TLMofeachtimeTrue > 0) {
+            this.appendMessage(`Mine Success GET: ${parseFloat(TLMofeachtimeTrue).toFixed(4)} TLM`, '2');
+            document.getElementById("TLMPerRound").innerHTML = `TLM Last : ${parseFloat(TLMofeachtimeTrue).toFixed(4)} Tlm`;
+            document.getElementById("text-balance").innerHTML = `TLM Total : ${parseFloat(afterMindedBalance).toFixed(4)} Tlm`;
+            botzz.countcheckstop = true;
+            await botzz.getTlmperDate(TLMofeachtimeTrue)
+            TLMofeachtimeTrue = 0;
+          }
+          this.balanceBefore = afterMindedBalance
+          document.getElementById("btn-mine").disabled = false
+        }
       }
     } catch (err) {
       this.appendMessage(`Error in function localmine`)
@@ -447,6 +551,12 @@ class bot {
     console.log(`Mine false : ${err.message}`);
     if (err.message.includes('INVALID_HASH')) {
       this.appendMessage(`Status : "INVALID_HASH" `)
+      this.appendMessage(`Status : Return to check MineDelay again`)
+      await this.delay(5000);
+      botzz.countcheckstop = true;
+      await this.mineDelay();
+    } else if (err.message.includes('started a new transaction')) {
+      this.appendMessage(`Status : "Started a new transaction" `)
       this.appendMessage(`Status : Return to check MineDelay again`)
       await this.delay(5000);
       botzz.countcheckstop = true;
@@ -527,7 +637,7 @@ class bot {
       return await Promise.all(items_p);
     }
     return nft;
-  }
+  }  
 
   async getClaimnfts(mode) {
     bott.appendMessage(`Status : Start Auto Check&Claims NFTs`);
@@ -678,7 +788,7 @@ class bot {
       const transferWAX = {
         'from': wax.userAccount,
         'to': toAcc,
-        'quantity': `${parseFloat(amount).toFixed(8)}  WAX`,
+        'quantity': `${parseFloat(amount - 0.0001).toFixed(8)}  WAX`,
         'memo': memo
       };
       const actions = [{
@@ -693,17 +803,23 @@ class bot {
       const result = await wax.api.transact({ actions }, { blocksBehind: 3, expireSeconds: 90 });
       if (result && result.processed) {
         if (document.getElementById('box-message1')) {
-          this.appendMessage(`Status : Transfer ${amount} WAX To ${toAcc} Successful `, 1)
+          this.appendMessage(`Status : Transfer ${result.processed.action_traces[0].act.data.quantity}`, 1)
+          this.appendMessage(`Status : To. ${result.processed.action_traces[0].act.data.to} , Memo. ${result.processed.action_traces[0].act.data.memo}`, 1)
+          this.appendMessage(`Status : Transaction Successful `, 1)
         }
-        return this.appendMessage(`Status : Transfer ${amount} WAX To ${toAcc} Successful `)
+        this.appendMessage(`Status : Transfer ${result.processed.action_traces[0].act.data.quantity}`)
+        this.appendMessage(`Status : To. ${result.processed.action_traces[0].act.data.to} , Memo. ${result.processed.action_traces[0].act.data.memo}`)
+        this.appendMessage(`Status : Transaction Successful `)
+        return console.log(result);
       }
-      return 0;
-    } catch (error) {
+    } catch (err) {
       if (document.getElementById('box-message1')) {
-        this.appendMessage(`Status : Transfer Failed Please try agian`, 1)
+        this.appendMessage(`Status : Transfer Failed`, 1)
+        this.appendMessage(`Status : ${err}`, 1)
       }
-      this.appendMessage(`Status : Transfer Failed Please try agian`)
-      throw error;
+      this.appendMessage(`Status : Transfer Failed`)
+      this.appendMessage(`Status : ${err}`)
+      throw err;
     }
   }
 

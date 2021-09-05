@@ -1,4 +1,8 @@
 class allfunction {
+    constructor() {
+        this.Maxwaxs = '';        
+      }
+
     async MoreInfoAll() {
         this.infoWax()
         this.infoTlm()
@@ -13,14 +17,19 @@ class allfunction {
 
     async maxwax() {
         console.log('max')
-        document.getElementById("text_stake_cpu").value = parseFloat(document.getElementById("info-stake-balance").value)
+        document.getElementById("text_stake_cpu").value = Math.trunc(this.Maxwaxs);
+    }
+
+    async maxTransfer() {
+        console.log('max')
+        document.getElementById("text_tranfer_wax").value = parseFloat(document.getElementById("info-wax-transfer").innerHTML)
     }
 
     async infoTlm() {
         document.getElementById("info-tlm-balance").innerHTML = "Please Wait.."
         const balancez = await getBalance(wax.userAccount, wax.api.rpc);
         document.getElementById("info-tlm-balance").innerHTML = balancez
-        document.getElementById("text-balance").innerHTML = balancez
+        document.getElementById("text-balance").innerHTML = `TLM Total : ${parseFloat(balancez).toFixed(4)} Tlm`
         return balancez
     }
 
@@ -28,8 +37,7 @@ class allfunction {
         document.getElementById("info-wax-transfer").innerHTML = "Please Wait.."
         let accountDetail = await bott.postData('https://wax.pink.gg/v1/chain/get_account', { account_name: wax.userAccount }, 'POST')
         if (accountDetail) {
-            document.getElementById("info-wax-transfer").innerHTML = parseFloat(accountDetail.core_liquid_balance).toFixed(4).toString() + " WAX"
-            return balanceWax.toFixed(4)
+            document.getElementById("info-wax-transfer").innerHTML = parseFloat(accountDetail.core_liquid_balance).toFixed(4).toString() + " WAX"        
         }
     }
 
@@ -37,13 +45,14 @@ class allfunction {
         document.getElementById("info-stake-balance").innerHTML = "Please Wait.."
         let accountDetails = await bott.postData('https://wax.pink.gg/v1/chain/get_account', { account_name: wax.userAccount }, 'POST')
         let id_stacks = "[ You have staked : " + parseFloat(accountDetails.total_resources.cpu_weight).toFixed(4).toString() + " Wax ] | [ Balance : " + parseFloat(accountDetails.core_liquid_balance).toFixed(4).toString() + " Wax ]";
+        this.Maxwaxs = parseFloat(accountDetails.core_liquid_balance).toFixed(4).toString()
         if (accountDetails) {
             document.getElementById("info-stake-balance").innerHTML = id_stacks
         }
     }
 
     async SetBagInfo() {
-        let accountDetail = await bott.postData('https://wax.api.atomicassets.io/atomicassets/v1/assets?collection_name=alien.worlds&owner=' + wax.userAccount + '&limit=100&schema_name=tool.worlds', {}, 'GET')
+        let accountDetail = await bott.postData(atomic_endpoint[getRandom(0,atomic_endpoint.length)] + '/atomicassets/v1/assets?collection_name=alien.worlds&owner=' + wax.userAccount + '&limit=100&schema_name=tool.worlds', {}, 'GET')
         if (accountDetail) {
             let i = 0;
             let selectBag = ''
@@ -66,7 +75,7 @@ class allfunction {
         const gg = await bott.postData('https://wax.pink.gg/v1/chain/get_table_rows', body, 'POST')
         let i = 0;
         for (const item of gg.rows[0].items) {
-            const qq = await bott.postData('https://wax.api.atomicassets.io/atomicassets/v1/assets/' + item, {}, 'GET')
+            const qq = await bott.postData(atomic_endpoint[getRandom(0,atomic_endpoint.length)] + '/atomicassets/v1/assets/' + item, {}, 'GET')
             console.log("get pic bags");
             document.getElementById("BagImage" + i).src = 'https://ipfs.io/ipfs/' + qq.data.data.img;
             document.getElementById("BagAsset" + i).innerHTML = item
@@ -87,8 +96,10 @@ class allfunction {
         const token = gg.rows[0].current_land
         var toton_number = token
         console.log(toton_number.toString(13));
-        const qq = await bott.postData('https://wax.api.atomicassets.io/atomicassets/v1/assets/' + toton_number, {}, 'GET')
+        const qq = await bott.postData(atomic_endpoint[getRandom(0,atomic_endpoint.length)] + '/atomicassets/v1/assets/' + toton_number, {}, 'GET')
         console.log(qq.data);
+        console.log(qq.data.template.immutable_data.planet);
+        bott.nameworlds = qq.data.template.immutable_data.planet;
         document.getElementById("LandImage").src = 'https://ipfs.io/ipfs/' + qq.data.data.img;
         document.getElementById("text-commission").innerHTML = (qq.data.data.commission * 0.01).toFixed(2)
         document.getElementById("text-id-land").innerHTML = qq.data.asset_id
@@ -101,7 +112,7 @@ class allfunction {
     async f_get_bags() {
         try {
             bott.appendMessage(`Status : Fatching tools.`, 1)
-            let accountDetail = await bott.postData('https://wax.api.atomicassets.io/atomicassets/v1/assets?collection_name=alien.worlds&owner=' + wax.userAccount + '&limit=100&schema_name=tool.worlds', {}, 'GET')
+            let accountDetail = await bott.postData(atomic_endpoint[getRandom(0,atomic_endpoint.length)] + '/atomicassets/v1/assets?collection_name=alien.worlds&owner=' + wax.userAccount + '&limit=100&schema_name=tool.worlds', {}, 'GET')
             console.log(accountDetail)
             if (accountDetail) {
                 let i = 0;

@@ -101,7 +101,7 @@ class loginz {
             <div class="col-12 mt-2"><hr /></div>
             <div class="col-12 mt-2"><b>[---- STAKE ----]</b></div>
             <input class="col-12 mt-2 text-center" id="amount-stake" placeholder="Amount Stake CPU" value="">
-            <button class="col-12 mt-2 btn btn-info" type="button" id="btn_transfer_wax" onclick="bott.stakecpu(document.getElementById('amount-stake').value)">Stake CPU</button>
+            <button class="col-12 mt-2 btn btn-info" type="button" id="btn_stake" onclick="bott.stakecpu(document.getElementById('amount-stake').value)">Stake CPU</button>
             <div class="col-12 mt-2"><b>[---- Transfer TOOLS ----]</b></div>                    
             <select class="col-6 mt-2" id="select_bag_4"><option value>--- Select ---</option></select><input class="col-6 mt-2 text-center" id="input-receiver-id" placeholder="xxx.wam" value="">
             <button class="col-12 mt-2 btn btn-info" type="button" id="btn_transfer_item" onclick="allfunc.f_transferItem(document.getElementById('input-receiver-id').value, document.getElementById('select_bag_4').value)">Transfer Item</button>
