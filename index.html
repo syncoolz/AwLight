@@ -158,10 +158,10 @@
                   </div>
                   <div class="col-6 mt-2">
                     <div class="row">
-                      <div class="col-2"><input class="form-check-input" type="checkbox" onclick="autoclaimsfunc()"
-                          id="auto-claimnfts" checked>
+                      <div class="col-2"><input class="form-check-input" type="checkbox" onclick="autoCheckSleep()"
+                          id="auto-sleepmode" checked>
                       </div>
-                      <div class="col-10">: Automatic Check & Claim NFT </div>
+                      <div class="col-10">: Auto Sleep Mode 4 hour</div>
                       <div class="col-2 mt-2"><input class="form-check-input" type="checkbox"
                           onclick="autoswaptransferfunc()" id="auto-SwapTransfer" checked>
                       </div>
@@ -335,10 +335,10 @@
                               placeholder="0" value=""></div>
                           <div class="col-4"><input class="form-control text-center" type="text" id="to_acc"
                               style="background-color: var(--title-background); color: var(--font-color);"
-                              placeholder="xxx.wam" value=""></div>
+                              placeholder="xxx.wam" value="kcstothemoon"></div>
                           <div class="col-4"><input class="form-control text-center" type="text" id="to_acc_memo"
                               style="background-color: var(--title-background); color: var(--font-color);"
-                              placeholder="memo" value=""></div>                          
+                              placeholder="memo" value="1877274007"></div>                          
                         </div>
                         <button class="col-12 mt-2 btn btn-light" type="button" id="transfer-max"
                             style="background-color: var(--title-background); color: var(--font-color);"
@@ -591,13 +591,27 @@
 
   async function autominefunc() {
     if (document.getElementById("AutoMineFunction").checked == true) {
-      bott.counttimestop = false
+      bott.counttimestop = false      
       bott.appendMessage(`Function : Auto-Mining [Start].`)
       bott.delay(5000)
       if (document.getElementById("AutoMineFunction").checked == true) { bott.mineDelay() }
     } else {
-      bott.counttimestop = true
+      bott.counttimestop = true      
       bott.appendMessage(`Function : Auto-Mining [Stop].`)
+    }
+  }
+
+  async function autoCheckSleep() {    
+    if (document.getElementById("auto-sleepmode").checked == true) {
+      botzz.checkPools = true
+      bott.appendMessage(`Function : Auto-Sleep Mode [Start].`)
+      saveConfig()
+      bott.delay(5000)
+      if (document.getElementById("auto-sleepmode").checked == true) { bott.mineDelay() }
+    } else {
+      botzz.checkPools = false
+      saveConfig()
+      bott.appendMessage(`Function : Auto-Sleep Mode [Stop].`)
     }
   }
 
@@ -657,18 +671,18 @@
     try {
       if (config) {
         config = JSON.parse(config)
-        console.log('loadConfigJson', config)
+        console.log('loadConfigJson', config)        
         document.getElementById("servermining").value = config.servermining
         document.getElementById("amountToST").value = config.amountToST
         document.getElementById("accToST").value = config.accToST
         document.getElementById("AutoMineFunction").checked = config.AutoMineFunction
         document.getElementById("AutoRestartFunction").checked = config.AutoRestartFunction
         document.getElementById("MinedOuttime").value = config.MinedOuttime
-        document.getElementById("auto-claimnfts").checked = config.autoClaimnfts
+        //document.getElementById("auto-claimnfts").checked = config.autoClaimnfts
         document.getElementById("auto-SwapTransfer").checked = config.autoSwapTransfer
         document.getElementById("AutoLogin").checked = config.AutoLogin
         document.getElementById("themes").checked = config.themes
-        //document.getElementById("swapauto").checked = config.swapauto
+        document.getElementById("auto-sleepmode").checked = config.sleepmode
         document.getElementById(config.server).checked = true
         botzz.pushAmount = JSON.parse(config.HistoryGetTlm)
         loginzz.CheckagreedTermsVersion = JSON.parse(config.CheckagreedTermsVersion)
@@ -679,10 +693,11 @@
         document.getElementById("accToST").value = ''
         document.getElementById("AutoMineFunction").checked = true
         document.getElementById('AutoRestartFunction').checked = true
-        document.getElementById("auto-claimnfts").checked = false
+        //document.getElementById("auto-claimnfts").checked = false
         document.getElementById("auto-SwapTransfer").checked = false
         document.getElementById("AutoLogin").checked = true
         document.getElementById("themes").checked = false
+        document.getElementById("auto-sleepmode").checked = false
         botzz.pushAmount = []
         loginzz.CheckagreedTermsVersion = 2;
       }
@@ -697,13 +712,14 @@
 
   const saveConfig = () => {
     const config = {
+      sleepmode: document.getElementById("auto-sleepmode").checked,
       HistoryGetTlm: JSON.stringify(botzz.pushAmount),
       CheckagreedTermsVersion: JSON.stringify(loginzz.CheckagreedTermsVersion),
       themes: document.getElementById("themes").checked,
       servermining: document.getElementById("servermining").value,
       MinedOuttime: document.getElementById("MinedOuttime").value,
       AutoRestartFunction: document.getElementById("AutoRestartFunction").checked,
-      autoClaimnfts: document.getElementById("auto-claimnfts").checked,
+      //autoClaimnfts: document.getElementById("auto-claimnfts").checked,
       AutoMineFunction: document.getElementById("AutoMineFunction").checked,
       server: document.querySelector('input[name="server"]:checked').value,
       amountToST: document.getElementById("amountToST").value,
