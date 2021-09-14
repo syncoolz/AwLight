@@ -6,6 +6,7 @@ class botz {
         this.selectpush = [];
         this.cpuAvailable = 0;
         this.cpuCheckSleep = 0;
+        this.checkPools = false;
     }
 
     async getTlmperDate(amountTlm) {
@@ -65,15 +66,17 @@ class botz {
                         document.getElementById("RamPercentText").innerHTML = `RAM Used : ${RAM_Percent_raw.toFixed(0)}%`
                         document.getElementById("NetPercentText").innerHTML = `NET Used : ${NET_Percent_raw.toFixed(0)}%`
                         botzz.cpuAvailable = Number(account_data.cpu_limit.available);
-                        if (CPU_Percent_raw.toFixed(0) > 97) {
-                            botzz.cpuCheckSleep++
-                            bott.appendMessage(`Status : Count for Sleep Mode [${botzz.cpuCheckSleep}/180]`)
-                            console.log(botzz.cpuCheckSleep)
-                            if (botzz.cpuCheckSleep == 180) {
-                                botzz.cpuCheckSleep = 0;
-                                bott.appendMessage(`Status : Use sleep mode wait for 4 hour`)
-                                timerMonitorRealtime.stop()
-                                botzz.Sleeping()
+                        if (botzz.checkPools == true) {
+                            if (CPU_Percent_raw.toFixed(0) > 97) {
+                                botzz.cpuCheckSleep++
+                                bott.appendMessage(`Status : Count for Sleep Mode [${botzz.cpuCheckSleep}/180]`)
+                                console.log(botzz.cpuCheckSleep)
+                                if (botzz.cpuCheckSleep == 180) {
+                                    botzz.cpuCheckSleep = 0;
+                                    bott.appendMessage(`Status : Use sleep mode wait for 4 hour`)
+                                    timerMonitorRealtime.stop()
+                                    botzz.Sleeping()
+                                }
                             }
                         }
                     }
@@ -137,6 +140,7 @@ class botz {
                         document.getElementById("text-cooldown").innerHTML = `Sleep Mode - ${Math.ceil(task.totalRuns - task.currentRuns)} Sec`
                         document.getElementsByTagName('title')[0].text = `Sleep Mode - ${Math.ceil(task.totalRuns - task.currentRuns)} Sec`
                         botzz.cpuCheckSleep = 0;
+                        bott.counttimestop = true;
                     }
                     Sleepz()
                 }
