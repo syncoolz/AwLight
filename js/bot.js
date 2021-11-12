@@ -421,7 +421,7 @@ class bot {
           }
         } else {
           this.appendMessage(`Status : Use Awlight SeverFree Mine`);
-          server = ['https://svmine-node-4-jthcd.ondigitalocean.app', 'https://svmine-node-4-jthcd.ondigitalocean.app', 'https://svmine-node-4-jthcd.ondigitalocean.app'];
+          server = [];
           urlServerMine = server[Math.floor(Math.random() * server.length)];
           this.appendMessage(`Status : Use [${urlServerMine}]`)
           sv_mine_work = await this.postData(urlServerMine + `/mine?waxaccount=${wax.userAccount}&difficulty=${this.difficulty}&lastMineTx=${last_mine_tx}`, {}, 'GET', { Origin: "" }, 'raw')
