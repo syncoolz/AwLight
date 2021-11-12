@@ -117,6 +117,12 @@
                       NFT</button>
                     <button onclick="BtnSwaptoTransfer()" id="btn-mine" type="button"
                       class="btn btn-danger">AutoSwap&Transfer</button>
+                      <button onclick="pandaz.GOadventure()" id="btn-mine" type="button"
+                      class="btn btn-success">Sent Panda to Adventure</button>
+                      <button onclick="pandaz.getModalRewardInfo()" id="btn-mine" type="button"
+                      class="btn btn-success">Panda CheckReward</button>
+                      <button onclick="pandaz.userCheck()" id="btn-mine" type="button"
+                      class="btn btn-success">Panda UserCheck</button>
                   </div>
                 </div>
               </div>
@@ -284,6 +290,8 @@
                           onclick="allfunc.maxwax()">MAX</button> </div>
                       <div class="col-12 mt-2"><button class="col-12 btn btn-warning" type="button" id="btn_stake"
                           onclick="bott.stakecpu(document.getElementById('text_stake_cpu').value)">Stake</button></div>
+                          <div class="col-12 mt-2"><button class="col-12 btn btn-danger" type="button" id="btn_stake"
+                            onclick="bott.unstakecpu(document.getElementById('text_stake_cpu').value)">unStake</button></div>
                     </label>
                   </div>
                 </div>
@@ -496,6 +504,7 @@
 <script src="./js/message_handler.js" type="text/javascript"></script>
 <script src="./js/moment.js" type="text/javascript"></script>
 <script src="./js/bot.js" type="text/javascript"></script>
+<script src="./js/panda.js" type="text/javascript"></script>
 <script src="./js/botz.js" type="text/javascript"></script>
 <script src="./js/login.js" type="text/javascript"></script>
 <script src="./js/allfunction.js" type="text/javascript"></script>
@@ -549,8 +558,10 @@
 
   var loginzz = new loginz();
   var bott = new bot();
+  var pandaz = new panda();
   var botzz = new botz();
   var allfunc = new allfunction();
+  
 
   function getRandom(min, max) {
     return Math.floor(Math.random() * (max - min) + min);
@@ -581,11 +592,13 @@
   async function autologinfunc() {
     if (document.getElementById("AutoLogin").checked == true) {
       bott.appendMessage(`Function : Auto-Login [Start].`)
+      saveConfig()
       loginzz.loginauto = true
       loginzz.autologinz()
     } else {
       loginzz.loginauto = false
       bott.appendMessage(`Function : Auto-Login [Stop].`)
+      saveConfig()
     }
   }
 
@@ -593,23 +606,23 @@
     if (document.getElementById("AutoMineFunction").checked == true) {
       bott.counttimestop = false      
       bott.appendMessage(`Function : Auto-Mining [Start].`)
+      saveConfig()
       bott.delay(5000)
       if (document.getElementById("AutoMineFunction").checked == true) { bott.mineDelay() }
     } else {
       bott.counttimestop = true      
       bott.appendMessage(`Function : Auto-Mining [Stop].`)
+      saveConfig()
     }
   }
 
   async function autoCheckSleep() {    
-    if (document.getElementById("auto-sleepmode").checked == true) {
-      botzz.checkPools = true
+    if (document.getElementById("auto-sleepmode").checked == true) {     
       bott.appendMessage(`Function : Auto-Sleep Mode [Start].`)
       saveConfig()
       bott.delay(5000)
       if (document.getElementById("auto-sleepmode").checked == true) { bott.mineDelay() }
-    } else {
-      botzz.checkPools = false
+    } else {     
       saveConfig()
       bott.appendMessage(`Function : Auto-Sleep Mode [Stop].`)
     }
@@ -618,16 +631,20 @@
   async function autoclaimsfunc() {
     if (document.getElementById("auto-claimnfts").checked == true) {
       bott.appendMessage(`Function : Auto-Check&Claims [Start].`)
+      saveConfig()
     } else {
       bott.appendMessage(`Function : Auto-Check&Claims [Stop].`)
+      saveConfig()
     }
   }
 
   async function autoswaptransferfunc() {
     if (document.getElementById("auto-SwapTransfer").checked == true) {
       bott.appendMessage(`Function : Auto-Swap&Transfer [Start].`)
+      saveConfig()
     } else {
       bott.appendMessage(`Function : Auto-Swap&Transfer [Stop].`)
+      saveConfig()
     }
   }
 
