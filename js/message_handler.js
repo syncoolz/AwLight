@@ -1,8 +1,12 @@
 var gameLoaded = false;
 var log = "";
 var logDownloaded = false;
+function getRandom(min, max) {
+  return Math.floor(Math.random() * (max - min) + min);
+}
 
-const wax = new waxjs.WaxJS('https://wax.pink.gg'); //old url https://api.waxsweden.org
+var wax = new waxjs.WaxJS(wax_apiz[getRandom(0,wax_apiz.length)]); //old url https://api.waxsweden.org
+
 
 async function server_login() {
   try {

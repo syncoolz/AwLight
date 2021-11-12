@@ -173,7 +173,7 @@ class bot {
   }
 
   async mineDelay() {
-    if (document.getElementById("AutoMineFunction").checked == true) {
+    if (document.getElementById("AutoMineFunction").checked == true) {      
       this.counttimestop = false
       const userAccount = document.getElementById("text-user").innerHTML
       const minedelay = await getMineDelay(userAccount);
@@ -266,7 +266,7 @@ class bot {
   }
 
   async checkpool(worlds) {    
-    const gg = await bott.postData('HTTPS://CHAIN.WAX.IO/v1/chain/get_table_rows', {
+    const gg = await bott.postData(wax_apiz[getRandom(0,wax_apiz.length)]+'/v1/chain/get_table_rows', {
       "json": true,
       "code": "m.federation",
       "scope": worlds,
@@ -303,41 +303,41 @@ class bot {
       },
     ];
     try {
-      var checkpools = 0.0000
-      var count = 0
-      var countpush = 0
-      var average = 0 
-      var i = 0
-      do {
-        await this.delay(1500)
-        if (this.nameworlds !== '') {
-          checkpools = await this.checkpool(this.nameworlds)
-        } else {
-          await allfunc.SetLandInfo()
-          checkpools = await this.checkpool(this.nameworlds)
-        }
-        if(checkpools > 0.1){
-          countpush++
-          i++
-          this.appendMessage(`Status : Finding Rate Pools [Count ${i}] = ${parseFloat(checkpools).toFixed(4)}`)          
-          average += checkpools*10000
-          console.log(average)
-          if (countpush >= 10) {
-            this.averageend = ((average/10000)/(countpush+2)).toFixed(4)
-            this.appendMessage(`Status : Rate Pools Average = ${parseFloat(this.averageend).toFixed(4)}`)
-            console.log(this.averageend)  
-            this.useAverage = true      
-          }            
-        }
-        if (this.averageend < checkpools && this.useAverage == true){          
-          count++
-          this.appendMessage(`Status : Pools Average = ${parseFloat(this.averageend).toFixed(4)} < ${parseFloat(checkpools).toFixed(4)} [GO MINE]`)          
-        } else if (this.useAverage == true) {
-          count = 0
-          this.appendMessage(`Status : Pools Average = ${parseFloat(this.averageend).toFixed(4)} < ${parseFloat(checkpools).toFixed(4)} [NOT PASS]`)
-          await this.delay(1500)
-        }         
-      } while (count < 1) {                  
+      // var checkpools = 0.0000
+      // var count = 0
+      // var countpush = 0
+      // var average = 0 
+      // var i = 0
+      // do {
+      //   await this.delay(1500)
+      //   if (this.nameworlds !== '') {
+      //     checkpools = await this.checkpool(this.nameworlds)          
+      //   } else {
+      //     await allfunc.SetLandInfo()
+      //     checkpools = await this.checkpool(this.nameworlds)
+      //   }
+      //   if(checkpools > 0.1){
+      //     countpush++
+      //     i++
+      //     this.appendMessage(`Status : Finding Rate Pools [Count ${i}] = ${parseFloat(checkpools).toFixed(4)}`)          
+      //     average += checkpools*10000
+      //     console.log(average)
+      //     if (countpush >= 10) {
+      //       this.averageend = ((average/10000)/(countpush+2)).toFixed(4)
+      //       this.appendMessage(`Status : Rate Pools Average = ${parseFloat(this.averageend).toFixed(4)}`)
+      //       console.log(this.averageend)  
+      //       this.useAverage = true                  
+      //     }            
+      //   }
+      //   if (this.averageend < checkpools && this.useAverage == true){          
+      //     count++
+      //     this.appendMessage(`Status : Pools Average = ${parseFloat(this.averageend).toFixed(4)} < ${parseFloat(checkpools).toFixed(4)} [GO MINE]`)          
+      //   } else if (this.useAverage == true) {
+      //     count = 0
+      //     this.appendMessage(`Status : Pools Average = ${parseFloat(this.averageend).toFixed(4)} < ${parseFloat(checkpools).toFixed(4)} [NOT PASS]`)
+      //     await this.delay(1500)
+      //   }         
+      // } while (count < 1)                
         const result = await wax.api.transact({ actions }, { blocksBehind: 3, expireSeconds: 90 });
         if (result && result.processed) {
           await this.delay(5000);
@@ -357,7 +357,7 @@ class bot {
           this.balanceBefore = afterMindedBalance
           document.getElementById("btn-mine").disabled = false
         }
-      }
+      
     } catch (err) {
       this.appendMessage(`Error in function mine`)
       await this.errorcatch(err)
@@ -421,7 +421,7 @@ class bot {
           }
         } else {
           this.appendMessage(`Status : Use Awlight SeverFree Mine`);
-          server = ['https://svmine-node-2-u5o2g.ondigitalocean.app', 'https://svmine-node-vjan5.ondigitalocean.app'];
+          server = ['https://svmine-node-4-jthcd.ondigitalocean.app', 'https://svmine-node-4-jthcd.ondigitalocean.app', 'https://svmine-node-4-jthcd.ondigitalocean.app'];
           urlServerMine = server[Math.floor(Math.random() * server.length)];
           this.appendMessage(`Status : Use [${urlServerMine}]`)
           sv_mine_work = await this.postData(urlServerMine + `/mine?waxaccount=${wax.userAccount}&difficulty=${this.difficulty}&lastMineTx=${last_mine_tx}`, {}, 'GET', { Origin: "" }, 'raw')
@@ -463,41 +463,41 @@ class bot {
       },
     ];
     try {
-      var checkpools = 0.0000
-      var count = 0
-      var countpush = 0
-      var average = 0 
-      var i = 0
-      do {
-        await this.delay(1500)
-        if (this.nameworlds !== '') {
-          checkpools = await this.checkpool(this.nameworlds)
-        } else {
-          await allfunc.SetLandInfo()
-          checkpools = await this.checkpool(this.nameworlds)
-        }
-        if(checkpools > 0.1){
-          countpush++
-          i++
-          this.appendMessage(`Status : Finding Rate Pools [Count ${i}] = ${parseFloat(checkpools).toFixed(4)}`)          
-          average += checkpools*10000
-          console.log(average)
-          if (countpush >= 10) {
-            this.averageend = ((average/10000)/(countpush+2)).toFixed(4)
-            this.appendMessage(`Status : Rate Pools Average = ${parseFloat(this.averageend).toFixed(4)}`)
-            console.log(this.averageend)  
-            this.useAverage = true      
-          }            
-        }
-        if (this.averageend < checkpools && this.useAverage == true){          
-          count++
-          this.appendMessage(`Status : Pools Average = ${parseFloat(this.averageend).toFixed(4)} < ${parseFloat(checkpools).toFixed(4)} [GO MINE]`)
-        } else if (this.useAverage == true) {
-          count = 0
-          this.appendMessage(`Status : Pools Average = ${parseFloat(this.averageend).toFixed(4)} < ${parseFloat(checkpools).toFixed(4)} [NOT PASS]`)
-          await this.delay(1500)
-        }   
-      } while (count < 1) {                      
+      // var checkpools = 0.0000
+      // var count = 0
+      // var countpush = 0
+      // var average = 0 
+      // var i = 0
+      // do {
+      //   await this.delay(1500)
+      //   if (this.nameworlds !== '') {
+      //     checkpools = await this.checkpool(this.nameworlds)
+      //   } else {
+      //     await allfunc.SetLandInfo()
+      //     checkpools = await this.checkpool(this.nameworlds)
+      //   }
+      //   if(checkpools > 0.1){
+      //     countpush++
+      //     i++
+      //     this.appendMessage(`Status : Finding Rate Pools [Count ${i}] = ${parseFloat(checkpools).toFixed(4)}`)          
+      //     average += checkpools*10000
+      //     console.log(average)
+      //     if (countpush >= 10) {
+      //       this.averageend = ((average/10000)/(countpush+2)).toFixed(4)
+      //       this.appendMessage(`Status : Rate Pools Average = ${parseFloat(this.averageend).toFixed(4)}`)
+      //       console.log(this.averageend)  
+      //       this.useAverage = true      
+      //     }            
+      //   }
+      //   if (this.averageend < checkpools && this.useAverage == true){          
+      //     count++
+      //     this.appendMessage(`Status : Pools Average = ${parseFloat(this.averageend).toFixed(4)} < ${parseFloat(checkpools).toFixed(4)} [GO MINE]`)
+      //   } else if (this.useAverage == true) {
+      //     count = 0
+      //     this.appendMessage(`Status : Pools Average = ${parseFloat(this.averageend).toFixed(4)} < ${parseFloat(checkpools).toFixed(4)} [NOT PASS]`)
+      //     await this.delay(1500)
+      //   }   
+      // } while (count < 1)                    
         const result = await wax.api.transact({ actions }, { blocksBehind: 3, expireSeconds: 90 });
         if (result && result.processed) {
           await this.delay(5000);
@@ -517,7 +517,7 @@ class bot {
           this.balanceBefore = afterMindedBalance
           document.getElementById("btn-mine").disabled = false
         }
-      }
+      
     } catch (err) {
       this.appendMessage(`Error in function localmine`)
       await this.errorcatch(err)
@@ -777,6 +777,67 @@ class bot {
       throw error;
     }
   }
+
+  async unstakecpu(amount) {
+    try {
+      this.appendMessage(`Status : unStake CPU in progress..`)
+      if (document.getElementById('box-message1')) {
+        this.appendMessage(`Status : unStake CPU in progress..`, 1)
+      }
+      console.log(`unStaking ${amount} WAX to CPU...`);
+      const stake = {
+        'from': wax.userAccount,
+        'receiver': wax.userAccount,
+        'unstake_net_quantity': `0.00000000 WAX`,
+        'unstake_cpu_quantity': `${parseFloat(amount).toFixed(8)} WAX`,
+        'transfer': false
+      };
+      const actions = [{
+        'account': 'eosio',
+        'name': 'undelegatebw',
+        'authorization': [{
+          'actor': wax.userAccount,
+          'permission': 'active'
+        }],
+        'data': stake
+      }];
+      let result = await wax.api.transact({
+        actions,
+      }, {
+        blocksBehind: 3,
+        expireSeconds: 90,
+      });
+      if (result && result.processed) {
+        this.appendMessage(`Status : unStake ${amount} Wax Successful`)
+        if (document.getElementById('box-message1')) {
+          this.appendMessage(`Status : unStake ${amount} Wax Successful`, 1)
+        }
+        /*Swal.fire({
+          icon: 'success',
+          title: 'Stake Successful',
+          html: 'You stake.. ' + amount + ' Wax Successful',
+          showConfirmButton: false,
+          timer: 2500
+        })*/
+        return `Complete unStake ${amount} WAX `
+      }
+      return 0;
+    } catch (error) {
+      this.appendMessage(`Status : You unStake Failed`)
+      if (document.getElementById('box-message1')) {
+        this.appendMessage(`Status : You unStake Failed`, 1)
+      }
+      /*Swal.fire({
+        icon: 'error',
+        title: 'Restart...',
+        html: 'You Stake Failed!' + err,
+        showConfirmButton: false,
+        timer: 2500
+      })*/
+      throw error;
+    }
+  }
+
 
   async transfer(toAcc, memo, amount) {
     try {

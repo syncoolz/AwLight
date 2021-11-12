@@ -5,8 +5,8 @@ class botz {
         this.pushAmount = [];
         this.selectpush = [];
         this.cpuAvailable = 0;
-        this.cpuCheckSleep = 0;
-        this.checkPools = false;
+        this.cpuCheckSleep = 0;        
+        this.CancelcpuCheckSleep = 0;
     }
 
     async getTlmperDate(amountTlm) {
@@ -66,16 +66,24 @@ class botz {
                         document.getElementById("RamPercentText").innerHTML = `RAM Used : ${RAM_Percent_raw.toFixed(0)}%`
                         document.getElementById("NetPercentText").innerHTML = `NET Used : ${NET_Percent_raw.toFixed(0)}%`
                         botzz.cpuAvailable = Number(account_data.cpu_limit.available);
-                        if (botzz.checkPools == true) {
+                        
+                        if (document.getElementById("auto-sleepmode").checked == true) {
                             if (CPU_Percent_raw.toFixed(0) > 97) {
                                 botzz.cpuCheckSleep++
-                                bott.appendMessage(`Status : Count for Sleep Mode [${botzz.cpuCheckSleep}/180]`)
+                                botzz.CancelcpuCheckSleep = 0;
+                                bott.appendMessage(`Status : Count for Sleep Mode [${botzz.cpuCheckSleep}/240]`)
                                 console.log(botzz.cpuCheckSleep)
-                                if (botzz.cpuCheckSleep == 180) {
+                                if (botzz.cpuCheckSleep == 240) {
                                     botzz.cpuCheckSleep = 0;
                                     bott.appendMessage(`Status : Use sleep mode wait for 4 hour`)
                                     timerMonitorRealtime.stop()
                                     botzz.Sleeping()
+                                }
+                            }else {
+                                botzz.CancelcpuCheckSleep++
+                                if (botzz.CancelcpuCheckSleep == 120){
+                                    botzz.CancelcpuCheckSleep = 0;
+                                    botzz.cpuCheckSleep = 0;
                                 }
                             }
                         }
