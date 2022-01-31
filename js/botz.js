@@ -49,7 +49,7 @@ class botz {
         timerMonitorRealtime.add([
             {
                 id: 'MonitorRealtime',       // unique ID of the task                
-                tickInterval: 10,   // run every 10 ticks (10 x interval = 10000 ms)
+                tickInterval: 300,   // run every 10 ticks (10 x interval = 10000 ms)
                 totalRuns: 0,       // run 2 times only. (set to 0 for unlimited times)
                 callback(task) {
                     console.log(`${task.id} CPU Checking.`);
